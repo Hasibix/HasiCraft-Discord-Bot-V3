@@ -9,8 +9,10 @@ import javax.security.auth.login.LoginException;
 public class Main {
 
     public static void main(String[] args) throws LoginException {
+        
         JDA bot = JDABuilder.createDefault(System.getenv("BOT_TOKEN"))
                 .setActivity(Activity.playing("hasi help | Play.HasiCraft.net"))
                 .build();
+
     }
 }
