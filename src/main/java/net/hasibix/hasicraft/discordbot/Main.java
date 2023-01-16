@@ -1,20 +1,35 @@
 package net.hasibix.hasicraft.discordbot;
 
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.entities.Activity;
-import io.github.cdimascio.dotenv.Dotenv;
-import io.github.cdimascio.dotenv.DotenvEntry;
-
 import javax.security.auth.login.LoginException;
+
+import io.github.cdimascio.dotenv.Dotenv;
+import net.hasibix.hasicraft.discordbot.models.client.HasiBot;
+import net.hasibix.hasicraft.discordbot.models.client.Logger;
 
 public class Main {
 
-    public static void main(String[] args) throws LoginException {
+    public static void main(String[] args) {
         Dotenv dotenv = Dotenv.configure().load();
-        JDA bot = JDABuilder.createDefault(dotenv.get("BOT_TOKEN"))
-                .setActivity(Activity.listening("hasi help | Play.HasiCraft.net"))
-                .build();
+        String token = dotenv.get("BOT_TOKEN");
+        Logger logger = new Logger("logs/");
 
+        HasiBot.Intent[] intents = new HasiBot.Intent[] { HasiBot.Intent.ALL_INTENTS };
+        
+        HasiBot client = new HasiBot(intents, logger);
+
+        try {
+            client.Login(token);
+        } catch (LoginException e) {
+            logger.FatalError("LoginExecepton occured! " + e);
+            System.exit(1);
+        }
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            client.Logoff();
+        }));
+    
+
+        client.SetActivity("hasi help | Play.HasiCraft.net", HasiBot.ActivityType.Listening, null);
+        
     }
 }
