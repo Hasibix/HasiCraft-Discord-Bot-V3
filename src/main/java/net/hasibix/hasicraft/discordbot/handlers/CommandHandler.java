@@ -48,7 +48,7 @@ public class CommandHandler extends ListenerAdapter {
         this.logger = logger;
 
         this.prefix = (String) config.get("prefix");
-        this.errorEmoji = (String) config.get("emojis");
+        this.errorEmoji = ":x:";
         this.successEmoji = ":white_check_mark:";
         this.warningEmoji = ":warning:";
         this.client = client;
