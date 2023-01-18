@@ -10,6 +10,7 @@ import javax.security.auth.login.LoginException;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.SelfUser;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.hasibix.hasicraft.discordbot.handlers.CommandHandler;
 import net.hasibix.hasicraft.discordbot.handlers.EventHandler;
@@ -126,13 +127,13 @@ public class HasiBot {
 
     Collection<GatewayIntent> gatewayIntents;
 
-    public HasiBot(@Nullable Intent[] intents, Logger logger) {
+    public HasiBot(@Nullable Intent[] intents, Logger logger, ConfigObject config) {
         this.logger = logger;
+        this.config = config;
         this.gatewayIntents = mapIntentsToGatewayIntents(intents);
-
     }
 
-    public void Login(String token) throws LoginException {
+    public void Login(String token) {
         if(token == null | token == "" | token == " ") {
             logger.FatalError("A Bot token cannot be null.");
             System.exit(1);
@@ -142,14 +143,24 @@ public class HasiBot {
         interactionHandler = new InteractionHandler();
         eventHandler = new EventHandler();
 
-        JDABuilder builder = JDABuilder.createDefault(token);
-        builder.addEventListeners(commandHandler);
-        builder.addEventListeners(interactionHandler);
-        builder.addEventListeners(eventHandler);
-        builder.setEnabledIntents(gatewayIntents);
-        this.bot = builder.build();
-        
-        this.config = commandHandler.Initialize(bot, "config.yml", logger);
+        try {
+            JDABuilder builder = JDABuilder.createDefault(token);
+            builder.setEnabledIntents(gatewayIntents);
+            this.bot = builder.build();
+
+            commandHandler.Initialize(this.bot, "config.yml", this.logger, this.config);
+
+            bot.addEventListener(commandHandler);
+            bot.addEventListener(interactionHandler);
+            bot.addEventListener(eventHandler);
+
+            SelfUser botUser = this.bot.getSelfUser();
+            String botTag = botUser.getAsTag();
+
+            this.logger.Log("[Discord] Logged in as " + botTag);
+        } catch (LoginException e) {
+            this.logger.FatalError("LoginException occured!\n" + e);
+        }
     }
 
     public void Logoff() {

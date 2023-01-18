@@ -1,11 +1,14 @@
 package net.hasibix.hasicraft.discordbot.models.client;
 
-import javax.annotation.Nullable;
-import java.io.FileWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.time.format.DateTimeFormatter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+import javax.annotation.Nullable;
 
 public class Logger {
     @Nullable String logsFolder;
@@ -95,6 +98,7 @@ public class Logger {
     void WriteLog(String text, String logsFolder, String type, LocalDateTime now) {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         try {
+            Files.createDirectories(Paths.get(logsFolder));
             File myObj = new File(logsFolder + type + "." + dtf.format(now) + ".log");
             if (myObj.createNewFile()) {
                 FileWriter writer = new FileWriter(logsFolder + type + "." + dtf.format(now) + ".log");

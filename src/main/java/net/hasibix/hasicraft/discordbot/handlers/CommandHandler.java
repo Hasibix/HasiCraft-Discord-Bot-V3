@@ -21,14 +21,13 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.hasibix.hasicraft.discordbot.models.client.Command;
-import net.hasibix.hasicraft.discordbot.models.client.Config;
 import net.hasibix.hasicraft.discordbot.models.client.Config.ConfigObject;
 import net.hasibix.hasicraft.discordbot.models.client.Logger;
 import net.hasibix.hasicraft.discordbot.utils.ClassFinder;
 import net.hasibix.hasicraft.discordbot.utils.EqualsArray;
 
 public class CommandHandler extends ListenerAdapter {
-    ConfigObject config;
+    public ConfigObject config;
     String prefix;
     String errorEmoji;
     String successEmoji;
@@ -38,15 +37,10 @@ public class CommandHandler extends ListenerAdapter {
 
     List<Command> commands;
 
-    public ConfigObject Initialize(JDA client, String pathToConfig, Logger logger) {
-        Config configs = new Config();
-        configs.loadConfig(pathToConfig);
-        config = configs.getConfig();
-
+    public void Initialize(JDA client, String pathToConfig, Logger logger, ConfigObject config) {
+        this.config = config;
         this.commands = new ArrayList<Command>();
-
         this.logger = logger;
-
         this.prefix = (String) config.get("prefix");
         this.errorEmoji = ":x:";
         this.successEmoji = ":white_check_mark:";
@@ -64,8 +58,6 @@ public class CommandHandler extends ListenerAdapter {
         } catch (ClassNotFoundException | InvocationTargetException | IllegalAccessException | IOException | NoSuchMethodException e) {
             this.logger.Error(e.toString());
         }
-
-        return config;
     }
 
     public void addCommand(Command command) {
