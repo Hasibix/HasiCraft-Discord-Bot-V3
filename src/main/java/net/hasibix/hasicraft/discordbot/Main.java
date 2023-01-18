@@ -7,11 +7,11 @@ import net.hasibix.hasicraft.discordbot.models.client.HasiBot;
 import net.hasibix.hasicraft.discordbot.models.client.Logger;
 
 public class Main {
-
+    public static Logger logger;
     public static void main(String[] args) {
         Dotenv dotenv = Dotenv.configure().load();
         String token = dotenv.get("BOT_TOKEN");
-        Logger logger = new Logger("logs/");
+        logger = new Logger("logs/");
 
         HasiBot.Intent[] intents = new HasiBot.Intent[] { HasiBot.Intent.ALL_INTENTS };
         

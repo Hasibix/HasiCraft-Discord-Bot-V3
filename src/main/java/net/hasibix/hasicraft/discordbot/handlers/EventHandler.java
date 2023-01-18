@@ -1,8 +1,14 @@
 package net.hasibix.hasicraft.discordbot.handlers;
 
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.events.*;
+import javax.annotation.Nonnull;
 
-public class EventHandler extends ListenerAdapter {
-    
+import net.dv8tion.jda.api.events.GenericEvent;
+import net.dv8tion.jda.api.hooks.EventListener;
+
+public class EventHandler implements EventListener {
+
+    public void onEvent(@Nonnull GenericEvent event) {
+
+    }
+
 }

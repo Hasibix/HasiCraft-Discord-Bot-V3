@@ -11,10 +11,10 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
-import net.hasibix.hasicraft.discordbot.Config;
 import net.hasibix.hasicraft.discordbot.handlers.CommandHandler;
 import net.hasibix.hasicraft.discordbot.handlers.EventHandler;
 import net.hasibix.hasicraft.discordbot.handlers.InteractionHandler;
+import net.hasibix.hasicraft.discordbot.models.client.Config.ConfigObject;
 
 public class HasiBot {
 
@@ -43,8 +43,11 @@ public class HasiBot {
     }
 
     JDA bot;
-    public Config config;
+    public ConfigObject config;
     public Logger logger;
+    public static CommandHandler commandHandler;
+    public static EventHandler eventHandler;
+    public static InteractionHandler interactionHandler;
 
     static Collection<GatewayIntent> mapIntentsToGatewayIntents(@Nullable Intent[] intents) {
 
@@ -135,15 +138,18 @@ public class HasiBot {
             System.exit(1);
         }
 
-        CommandHandler commandHandler = new CommandHandler();
-        InteractionHandler interactionHandler = new InteractionHandler();
+        commandHandler = new CommandHandler();
+        interactionHandler = new InteractionHandler();
+        eventHandler = new EventHandler();
+
         JDABuilder builder = JDABuilder.createDefault(token);
-            builder.addEventListeners(commandHandler);
-            builder.addEventListeners(interactionHandler);
-            builder.setEnabledIntents(gatewayIntents);
-            this.bot = builder.build();
+        builder.addEventListeners(commandHandler);
+        builder.addEventListeners(interactionHandler);
+        builder.addEventListeners(eventHandler);
+        builder.setEnabledIntents(gatewayIntents);
+        this.bot = builder.build();
         
-        this.config = commandHandler.Initialize(bot, "config.json", logger);
+        this.config = commandHandler.Initialize(bot, "config.yml", logger);
     }
 
     public void Logoff() {
