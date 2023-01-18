@@ -3,7 +3,7 @@ package net.hasibix.hasicraft.discordbot.utils;
 public class EqualsArray {
     public static Boolean Equals(Object obj, Object[] array) {
         for (Object i : array) {
-            if(obj == i) {
+            if(obj.equals(i)) {
                 return true;
             } else {
                 continue;

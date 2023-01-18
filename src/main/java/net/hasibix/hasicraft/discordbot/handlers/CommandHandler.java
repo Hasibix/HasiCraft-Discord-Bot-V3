@@ -1,5 +1,9 @@
 package net.hasibix.hasicraft.discordbot.handlers;
 
+import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -44,10 +48,27 @@ public class CommandHandler extends ListenerAdapter {
         this.logger = logger;
 
         this.prefix = (String) config.get("prefix");
-        this.errorEmoji = ":x:";
+        this.errorEmoji = (String) config.get("emojis");
         this.successEmoji = ":white_check_mark:";
         this.warningEmoji = ":warning:";
         this.client = client;
+
+        String packageName = "net.hasibix.hasicraft.discordbot.commands";
+
+        try {
+            File directory = new File(Thread.currentThread().getContextClassLoader().getResource(packageName.replace(".", "/")).toURI());
+            for (File file : directory.listFiles()) {
+                if (file.getName().endsWith(".class")) {
+                    String className = packageName + "." + file.getName().substring(0, file.getName().length() - 6);
+                    Class<?> cls = Class.forName(className);
+                    Method method = cls.getDeclaredMethod("register");
+                    Command command = (Command) method.invoke(null);
+                    commands.add(command);
+                }
+            }
+        } catch (URISyntaxException | ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            this.logger.Error(e.toString());
+        }
 
         return config;
     }
