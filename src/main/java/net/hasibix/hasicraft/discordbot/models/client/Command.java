@@ -11,7 +11,6 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 public class Command {
 
-    public static Command[] commands;
     public interface CommondFunc<T, U, V> {
         void run(T t, U u, V v);
     }

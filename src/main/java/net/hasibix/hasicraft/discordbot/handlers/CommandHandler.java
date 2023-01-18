@@ -1,9 +1,8 @@
 package net.hasibix.hasicraft.discordbot.handlers;
 
-import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,6 +24,7 @@ import net.hasibix.hasicraft.discordbot.models.client.Command;
 import net.hasibix.hasicraft.discordbot.models.client.Config;
 import net.hasibix.hasicraft.discordbot.models.client.Config.ConfigObject;
 import net.hasibix.hasicraft.discordbot.models.client.Logger;
+import net.hasibix.hasicraft.discordbot.utils.ClassFinder;
 import net.hasibix.hasicraft.discordbot.utils.EqualsArray;
 
 public class CommandHandler extends ListenerAdapter {
@@ -56,17 +56,12 @@ public class CommandHandler extends ListenerAdapter {
         String packageName = "net.hasibix.hasicraft.discordbot.commands";
 
         try {
-            File directory = new File(Thread.currentThread().getContextClassLoader().getResource(packageName.replace(".", "/")).toURI());
-            for (File file : directory.listFiles()) {
-                if (file.getName().endsWith(".class")) {
-                    String className = packageName + "." + file.getName().substring(0, file.getName().length() - 6);
-                    Class<?> cls = Class.forName(className);
-                    Method method = cls.getDeclaredMethod("register");
-                    Command command = (Command) method.invoke(null);
-                    commands.add(command);
-                }
+            Class<?>[] commandFiles = ClassFinder.getClassesFromPackage(packageName);
+            for (Class<?> i : commandFiles) {
+                Method method = i.getDeclaredMethod("register");
+                method.invoke(null);
             }
-        } catch (URISyntaxException | ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+        } catch (ClassNotFoundException | InvocationTargetException | IllegalAccessException | IOException | NoSuchMethodException e) {
             this.logger.Error(e.toString());
         }
 
@@ -80,6 +75,7 @@ public class CommandHandler extends ListenerAdapter {
                 return;
             }
         }
+        this.logger.Log("Added command: " + command.name);
         commands.add(command);
     }
 
@@ -129,7 +125,6 @@ public class CommandHandler extends ListenerAdapter {
                     continue;
                 }
             }
-        
 
             if(!commandFound) {
                 event.getMessage().reply(errorEmoji + " | Command not found!").queue();

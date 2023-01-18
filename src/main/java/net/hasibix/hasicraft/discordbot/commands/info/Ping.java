@@ -3,9 +3,12 @@ package net.hasibix.hasicraft.discordbot.commands.info;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.hasibix.hasicraft.discordbot.models.client.Command;
+import net.hasibix.hasicraft.discordbot.models.client.HasiBot;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public class Ping {
-    public static Command register() {
+    public static void register() {
         Command command = new Command(
             "ping",
             new String[]{},
@@ -13,7 +16,6 @@ public class Ping {
             new Permission[]{},
             "Info",
             new OptionData[]{},
-
             (jda, event, args) -> {
                 event.getMessage().reply("Pong!");
             },
@@ -21,7 +23,7 @@ public class Ping {
                 event.reply("Pong!");
             }
         );
-
-        return command;
+        
+        HasiBot.commandHandler.addCommand(command);
     }
 }

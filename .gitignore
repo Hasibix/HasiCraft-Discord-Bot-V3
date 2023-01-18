@@ -32,3 +32,6 @@
 /.vscode/*
 
 config.yml
+/logs
+/logs/
+/logs/*

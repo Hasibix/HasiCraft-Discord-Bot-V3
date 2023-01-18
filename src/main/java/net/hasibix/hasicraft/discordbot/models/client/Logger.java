@@ -95,9 +95,9 @@ public class Logger {
     void WriteLog(String text, String logsFolder, String type, LocalDateTime now) {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         try {
-            File myObj = new File(type + "." + dtf.format(now) + ".log");
+            File myObj = new File(logsFolder + type + "." + dtf.format(now) + ".log");
             if (myObj.createNewFile()) {
-                FileWriter writer = new FileWriter(type + "." + dtf.format(now) + ".log");
+                FileWriter writer = new FileWriter(logsFolder + type + "." + dtf.format(now) + ".log");
                 writer.write(text);
                 writer.close();
             } else {
@@ -110,9 +110,9 @@ public class Logger {
     }
 
     public void Log(String text) {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd/ HH:mm:ss");
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
         LocalDateTime now = LocalDateTime.now();
-        System.out.println(dtf.format(now) + Color.GREEN + "LOG: " +  Color.WHITE + text);
+        System.out.println(Color.CYAN + dtf.format(now) + " | " + Color.GREEN + "LOG: " +  Color.WHITE + text);
 
         if(logsFolder != null) {
             WriteLog(text, logsFolder, "log", now);            
@@ -122,7 +122,7 @@ public class Logger {
     public void Error(String text) {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         LocalDateTime now = LocalDateTime.now();
-        System.err.println(dtf.format(now) + Color.RED + "ERR: " +  Color.WHITE + text);
+        System.err.println(Color.CYAN + dtf.format(now) + " | " + Color.RED + "ERR: " +  Color.WHITE + text);
         if(logsFolder != null) {
             WriteLog(text, logsFolder, "error", now);            
         }
@@ -131,7 +131,7 @@ public class Logger {
     public void Warning(String text) {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         LocalDateTime now = LocalDateTime.now();
-        System.err.println(dtf.format(now) + Color.YELLOW + "WARN: " +  Color.WHITE + text);
+        System.err.println(Color.CYAN + dtf.format(now) + " | " + Color.YELLOW + "WARN: " +  Color.WHITE + text);
         if(logsFolder != null) {
             WriteLog(text, logsFolder, "warning", now);            
         }
@@ -140,7 +140,7 @@ public class Logger {
     public void FatalError(String text) {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         LocalDateTime now = LocalDateTime.now();
-        System.err.println(dtf.format(now) + Color.RED_BOLD + "FATAL: " +  Color.WHITE + text);
+        System.err.println(Color.CYAN + dtf.format(now) + " | " + Color.RED_BOLD + "FATAL: " +  Color.WHITE + text);
         if(logsFolder != null) {
             WriteLog(text, logsFolder, "fatalerror", now);            
         }
