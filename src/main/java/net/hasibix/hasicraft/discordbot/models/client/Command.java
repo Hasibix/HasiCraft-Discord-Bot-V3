@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 public class Command {
 
+    @FunctionalInterface
     public interface CommondFunc<T, U, V> {
         void accept(T t, U u, V v);
     }
