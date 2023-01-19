@@ -8,9 +8,6 @@ import net.hasibix.hasicraft.discordbot.models.client.Command;
 import net.hasibix.hasicraft.discordbot.models.client.HasiBot;
 
 public class Ping {
-    public static void run(JDA client, MessageReceivedEvent event, String[] args) {
-        event.getMessage().reply("Pong!");
-    }
     public static void register() {
         Command command = new Command(
             "ping",
