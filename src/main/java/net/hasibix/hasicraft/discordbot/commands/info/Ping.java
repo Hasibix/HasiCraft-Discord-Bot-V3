@@ -14,12 +14,8 @@ public class Ping {
             new Permission[]{},
             "Info",
             new OptionData[]{},
-            (jda, event, args) -> {
-                event.getMessage().reply("Pong!");
-            },
-            (jda, event, args) -> {
-                event.reply("Pong!");
-            }
+            (jda, event, args) -> event.getMessage().reply("Pong!"),
+            (jda, event, args) -> event.reply("Pong!")
         );
         
         HasiBot.commandHandler.addCommand(command);

@@ -27,7 +27,7 @@ public class Main {
         }));
     
 
-        client.SetActivity("hasi help | Play.HasiCraft.net", HasiBot.ActivityType.Listening, null);
+        client.SetActivity("hasi help | Play.HasiCraft.net", HasiBot.ActivityType.Streaming, "https://twitch.tv/hasibixlive");
         
     }
 }

@@ -10,7 +10,6 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -85,34 +84,26 @@ public class CommandHandler extends ListenerAdapter {
             Boolean commandFound = false;
             
             for (Command i : commands) {
-                if(unmanagedArgs[1].toString().equals(i.name)) {
-                    ArrayList<Permission> permissionList = new ArrayList<Permission>(Arrays.asList(i.permissions));
-                        if(i.permissions.length > 0 &&  member.hasPermission(permissionList)) {
-                            i.run.run(client, event, args);
-                            commandFound = true;
+                if(unmanagedArgs[1].toString().equals(i.name) | (i.aliases.length > 0 && EqualsArray.Equals(unmanagedArgs[1], i.aliases))) {
+                        Boolean hasPerms = false;
+                        if(i.permissions.length > 0) {
+                            if (member.hasPermission(i.permissions)) {
+                                hasPerms = true;
+                            } else {
+                                hasPerms = false;
+                            }
                         } else if (i.permissions.length == 0) {
+                            hasPerms = true;
+                        }
+                        
+                        if(hasPerms) {
                             i.run.run(client, event, args);
                             commandFound = true;
-                        } else if (i.permissions.length > 0 && !member.hasPermission(permissionList)) {
+                        } else {                            
                             event.getMessage().reply(errorEmoji + " | You don't have specified permissions to execute this command! | " + i.permissions).queue();
                             commandFound = true;
-                            return;
                         }
                         break;
-                } else if (i.aliases.length > 0 && EqualsArray.Equals(unmanagedArgs[1], i.aliases)) {
-                    ArrayList<Permission> permissionList = new ArrayList<Permission>(Arrays.asList(i.permissions));
-                    if(i.permissions.length > 0 &&  member.hasPermission(permissionList)) {
-                        i.run.run(client, event, args);
-                        commandFound = true;
-                    } else if (i.permissions.length == 0) {
-                        i.run.run(client, event, args);
-                        commandFound = true;
-                    } else if (i.permissions.length > 0 && !member.hasPermission(permissionList)) {
-                        event.getMessage().reply(errorEmoji + " | You don't have specified permissions to execute this command! | " + i.permissions).queue();
-                        commandFound = true;
-                        return;
-                    }
-                    break;
                 } else {
                     continue;
                 }
@@ -134,22 +125,26 @@ public class CommandHandler extends ListenerAdapter {
             List<OptionMapping> options = event.getOptions();
             OptionMapping[] args = options.toArray(new OptionMapping[options.size()]);
             for (Command i : commands) {
-                if (commandName.equals(i.name)) {
-                    ArrayList<Permission> permissionList = new ArrayList<Permission>(Arrays.asList(i.permissions));
-                    if(i.permissions.length > 0 &&  member.hasPermission(permissionList)) {
-                        i.slashrun.run(client, event, args);
-                        commandFound = true;
-                    } else if (i.permissions.length == 0) {
-                        i.slashrun.run(client, event, args);
-                        commandFound = true;
-                    } else if (i.permissions.length > 0 && !member.hasPermission(permissionList)) {
-                        event.reply(errorEmoji + " | You don't have specified permissions to execute this command! | " + i.permissions).queue();
-                        commandFound = true;
-                        return;
-                    }
-                    break;
-                } else if (i.aliases.length > 0 && EqualsArray.Equals(commandName, i.aliases)) {
-
+                if (commandName.equals(i.name) | (i.aliases.length > 0 && EqualsArray.Equals(commandName,  i.aliases))) {
+                    Boolean hasPerms = false;
+                        if(i.permissions.length > 0) {
+                            if (member.hasPermission(i.permissions)) {
+                                hasPerms = true;
+                            } else {
+                                hasPerms = false;
+                            }
+                        } else if (i.permissions.length == 0) {
+                            hasPerms = true;
+                        }
+                        
+                        if(hasPerms) {
+                            i.slashrun.run(client, event, args);
+                            commandFound = true;
+                        } else {                            
+                            event.reply(errorEmoji + " | You don't have specified permissions to execute this command! | " + i.permissions).queue();
+                            commandFound = true;
+                        }
+                        break;
                 }
             }
 
