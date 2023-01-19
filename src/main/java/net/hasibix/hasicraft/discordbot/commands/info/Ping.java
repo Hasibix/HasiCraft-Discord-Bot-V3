@@ -14,10 +14,10 @@ public class Ping {
             new Permission[]{},
             "Info",
             new OptionData[]{},
-            (jda, event, args) -> {
+            (client, event, args) -> {
                 event.getMessage().reply("Pong!");
             },
-            (jda, event, args) -> {
+            (client, event, args) -> {
                 event.reply("Pong!");
             }
         );
