@@ -36,6 +36,8 @@ public class CommandHandler extends ListenerAdapter {
 
     List<Command> commands;
 
+    Method slashRun;
+
     public void Initialize(JDA client, String pathToConfig, Logger logger, ConfigObject config) {
         this.config = config;
         this.commands = new ArrayList<Command>();
@@ -53,6 +55,7 @@ public class CommandHandler extends ListenerAdapter {
             for (Class<?> i : commandFiles) {
                 Method method = i.getDeclaredMethod("register");
                 method.invoke(null);
+                slashRun = i.getDeclaredMethod("slashrun");
             }
         } catch (ClassNotFoundException | InvocationTargetException | IllegalAccessException | IOException | NoSuchMethodException e) {
             this.logger.Error(e.toString());
@@ -138,7 +141,12 @@ public class CommandHandler extends ListenerAdapter {
                         }
                         
                         if(hasPerms) {
-                            i.slashrun.accept(client, event, args);
+                            //i.slashrun.accept(client, event, args);
+                            try {
+                                slashRun.invoke(client, event, args);
+                            } catch (Exception e) {
+                                logger.Error("eror");
+                            }
                             commandFound = true;
                         } else {                            
                             event.reply(errorEmoji + " | You don't have specified permissions to execute this command! | " + i.permissions).queue();
