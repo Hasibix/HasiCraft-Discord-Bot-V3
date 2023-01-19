@@ -12,7 +12,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 public class Command {
 
     public interface CommondFunc<T, U, V> {
-        void run(T t, U u, V v);
+        void accept(T t, U u, V v);
     }
 
     @Nonnull public final String name;

@@ -97,7 +97,7 @@ public class CommandHandler extends ListenerAdapter {
                         }
                         
                         if(hasPerms) {
-                            i.run.run(client, event, args);
+                            i.run.accept(client, event, args);
                             commandFound = true;
                         } else {                            
                             event.getMessage().reply(errorEmoji + " | You don't have specified permissions to execute this command! | " + i.permissions).queue();
@@ -138,7 +138,7 @@ public class CommandHandler extends ListenerAdapter {
                         }
                         
                         if(hasPerms) {
-                            i.slashrun.run(client, event, args);
+                            i.slashrun.accept(client, event, args);
                             commandFound = true;
                         } else {                            
                             event.reply(errorEmoji + " | You don't have specified permissions to execute this command! | " + i.permissions).queue();
