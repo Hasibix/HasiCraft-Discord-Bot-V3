@@ -19,9 +19,9 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import net.hasibix.hasicraft.discordbot.models.client.Command;
-import net.hasibix.hasicraft.discordbot.models.client.Config.ConfigObject;
-import net.hasibix.hasicraft.discordbot.models.client.Logger;
+import net.hasibix.hasicraft.discordbot.models.client.builders.Command;
+import net.hasibix.hasicraft.discordbot.models.client.utils.Logger;
+import net.hasibix.hasicraft.discordbot.models.client.utils.Config.ConfigObject;
 import net.hasibix.hasicraft.discordbot.utils.ClassFinder;
 import net.hasibix.hasicraft.discordbot.utils.EqualsArray;
 

@@ -1,7 +1,7 @@
 package net.hasibix.hasicraft.discordbot.handlers;
 
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.hasibix.hasicraft.discordbot.models.client.Interaction;
+import net.hasibix.hasicraft.discordbot.models.client.builders.Interaction;
 
 import javax.annotation.Nonnull;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;

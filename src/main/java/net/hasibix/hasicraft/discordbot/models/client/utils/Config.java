@@ -1,4 +1,4 @@
-package net.hasibix.hasicraft.discordbot.models.client;
+package net.hasibix.hasicraft.discordbot.models.client.utils;
 
 import java.io.File;
 import java.io.FileInputStream;

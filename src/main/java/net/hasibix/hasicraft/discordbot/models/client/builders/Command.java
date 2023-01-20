@@ -1,4 +1,4 @@
-package net.hasibix.hasicraft.discordbot.models.client;
+package net.hasibix.hasicraft.discordbot.models.client.builders;
 
 import javax.annotation.Nonnull;
 

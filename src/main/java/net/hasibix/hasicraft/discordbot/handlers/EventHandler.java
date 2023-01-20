@@ -10,8 +10,8 @@ import javax.annotation.Nonnull;
 
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
-import net.hasibix.hasicraft.discordbot.models.client.Event;
-import net.hasibix.hasicraft.discordbot.models.client.Logger;
+import net.hasibix.hasicraft.discordbot.models.client.builders.Event;
+import net.hasibix.hasicraft.discordbot.models.client.utils.Logger;
 import net.hasibix.hasicraft.discordbot.utils.ClassFinder;
 
 public class EventHandler implements EventListener {

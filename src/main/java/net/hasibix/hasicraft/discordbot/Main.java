@@ -1,10 +1,10 @@
 package net.hasibix.hasicraft.discordbot;
 
 import io.github.cdimascio.dotenv.Dotenv;
-import net.hasibix.hasicraft.discordbot.models.client.Config;
-import net.hasibix.hasicraft.discordbot.models.client.Config.ConfigObject;
-import net.hasibix.hasicraft.discordbot.models.client.HasiBot;
-import net.hasibix.hasicraft.discordbot.models.client.Logger;
+import net.hasibix.hasicraft.discordbot.models.client.builders.HasiBot;
+import net.hasibix.hasicraft.discordbot.models.client.utils.Config;
+import net.hasibix.hasicraft.discordbot.models.client.utils.Logger;
+import net.hasibix.hasicraft.discordbot.models.client.utils.Config.ConfigObject;
 
 public class Main {
     public static Logger logger;

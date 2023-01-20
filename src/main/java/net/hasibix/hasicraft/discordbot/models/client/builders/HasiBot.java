@@ -1,4 +1,4 @@
-package net.hasibix.hasicraft.discordbot.models.client;
+package net.hasibix.hasicraft.discordbot.models.client.builders;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,7 +15,8 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.hasibix.hasicraft.discordbot.handlers.CommandHandler;
 import net.hasibix.hasicraft.discordbot.handlers.EventHandler;
 import net.hasibix.hasicraft.discordbot.handlers.InteractionHandler;
-import net.hasibix.hasicraft.discordbot.models.client.Config.ConfigObject;
+import net.hasibix.hasicraft.discordbot.models.client.utils.Logger;
+import net.hasibix.hasicraft.discordbot.models.client.utils.Config.ConfigObject;
 
 public class HasiBot {
 
