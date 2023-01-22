@@ -25,7 +25,7 @@ public class Help {
                 String[] commandNameArray = commandNames.toArray(new String[commandNames.size()]);
                 String joined = String.join(",\n", commandNameArray);
 
-                event.getMessage().reply(joined).mentionRepliedUser(false).queue();
+                event.getMessage().reply("HasiCraft Bot Command List:\n```\n" + joined + "\n```").mentionRepliedUser(false).queue();
             },
             (client, event, args) -> {
                 List<String> commandNames = new ArrayList<String>();
@@ -35,7 +35,7 @@ public class Help {
                 String[] commandNameArray = commandNames.toArray(new String[commandNames.size()]);
                 String joined = String.join(",\n", commandNameArray);
 
-                event.reply(joined).queue();
+                event.reply("HasiCraft Bot Command List:\n```\n" + joined + "\n```").queue();
             }
         );
         
