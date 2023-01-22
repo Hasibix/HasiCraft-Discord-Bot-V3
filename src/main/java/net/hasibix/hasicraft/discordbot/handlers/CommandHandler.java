@@ -34,7 +34,7 @@ public class CommandHandler extends ListenerAdapter {
     JDA client;
     Logger logger;
 
-    List<Command> commands;
+    public List<Command> commands;
 
     public void Initialize(JDA client, String pathToConfig, Logger logger, ConfigObject config) {
         this.config = config;

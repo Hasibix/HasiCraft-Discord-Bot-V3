@@ -1,5 +1,8 @@
 package net.hasibix.hasicraft.discordbot.commands.info;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.hasibix.hasicraft.discordbot.models.client.builders.Command;
@@ -15,10 +18,26 @@ public class Help {
             "Info",
             new OptionData[]{},
             (client, event, args) -> {
-                event.getMessage().reply("Pong!").mentionRepliedUser(false).queue();
+                List<String> commandNames = new ArrayList<String>();
+                for (Command i : HasiBot.commandHandler.commands) {
+                    commandNames.add(i.name);
+                    break;
+                }
+                String[] commandNameArray = commandNames.toArray(new String[commandNames.size()]);
+                String joined = String.join(", ", commandNameArray);
+
+                event.getMessage().reply(joined).mentionRepliedUser(false).queue();
             },
             (client, event, args) -> {
-                event.reply("Pong!").queue();
+                List<String> commandNames = new ArrayList<String>();
+                for (Command i : HasiBot.commandHandler.commands) {
+                    commandNames.add(i.name);
+                    break;
+                }
+                String[] commandNameArray = commandNames.toArray(new String[commandNames.size()]);
+                String joined = String.join(", ", commandNameArray);
+
+                event.reply(joined).queue();
             }
         );
         
