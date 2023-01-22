@@ -20,7 +20,7 @@ public class EventHandler implements EventListener {
     public List<Event> events = new ArrayList<Event>();
 
     public void Initialize(Logger logger) {
-        String packageName = "net.hasibix.hasicraft.discordbot.evemts";
+        String packageName = "net.hasibix.hasicraft.discordbot.events";
 
         try {
             Class<?>[] commandFiles = ClassFinder.getClassesFromPackage(packageName);
@@ -37,8 +37,9 @@ public class EventHandler implements EventListener {
         events.add(event);
     }
 
+    @Override
     public void onEvent(@Nonnull GenericEvent event) {
-
+        
     }
 
 }
