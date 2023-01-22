@@ -21,7 +21,6 @@ public class Help {
                 List<String> commandNames = new ArrayList<String>();
                 for (Command i : HasiBot.commandHandler.commands) {
                     commandNames.add(i.name);
-                    break;
                 }
                 String[] commandNameArray = commandNames.toArray(new String[commandNames.size()]);
                 String joined = String.join(", ", commandNameArray);
