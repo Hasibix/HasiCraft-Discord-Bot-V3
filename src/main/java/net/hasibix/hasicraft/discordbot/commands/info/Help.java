@@ -23,7 +23,7 @@ public class Help {
                     commandNames.add(i.name);
                 }
                 String[] commandNameArray = commandNames.toArray(new String[commandNames.size()]);
-                String joined = String.join(", ", commandNameArray);
+                String joined = String.join(",\n", commandNameArray);
 
                 event.getMessage().reply(joined).mentionRepliedUser(false).queue();
             },
@@ -31,10 +31,9 @@ public class Help {
                 List<String> commandNames = new ArrayList<String>();
                 for (Command i : HasiBot.commandHandler.commands) {
                     commandNames.add(i.name);
-                    break;
                 }
                 String[] commandNameArray = commandNames.toArray(new String[commandNames.size()]);
-                String joined = String.join(", ", commandNameArray);
+                String joined = String.join(",\n", commandNameArray);
 
                 event.reply(joined).queue();
             }
