@@ -6,5 +6,4 @@ public class Event {
     public enum EventType {
         
     }
-    ReadyEvent
 }
