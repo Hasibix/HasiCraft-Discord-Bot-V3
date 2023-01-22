@@ -4,7 +4,7 @@ This is the source code for [HasiCraft](https://discord.gg/RX5azB3NwP)'s Discord
 
 ------------------------------------------------------------------
 
-##Copyright 2023 Hasibix Hasib
+## Copyright 2023 Hasibix Hasib
 
 This project is licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
