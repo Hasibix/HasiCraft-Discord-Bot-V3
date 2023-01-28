@@ -1,11 +1,7 @@
 package net.hasibix.hasicraft.discordbot.models.client.builders;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.MessageReaction.ReactionEmote;
 import net.dv8tion.jda.api.events.interaction.component.GenericComponentInteractionCreateEvent;
@@ -38,10 +34,6 @@ public class Interaction {
         this.interactionType = interactionType;
         this.permissions = permissions;
         this.run = run;
-
-        ArrayList<Interaction> interactionList = new ArrayList<Interaction>(Arrays.asList(interactions));
-        interactionList.add(this);
-        interactions = interactionList.toArray(new Interaction[interactionList.size()]);
     }
 
 }

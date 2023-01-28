@@ -8,6 +8,7 @@ import net.hasibix.hasicraft.discordbot.models.client.utils.Config.ConfigObject;
 
 public class Main {
     public static Logger logger;
+    public static HasiBot client;
     public static void main(String[] args) {
         Dotenv dotenv = Dotenv.configure().load();
         String token = dotenv.get("BOT_TOKEN");
@@ -18,7 +19,7 @@ public class Main {
 
         HasiBot.Intent[] intents = new HasiBot.Intent[] { HasiBot.Intent.ALL_INTENTS };
         
-        HasiBot client = new HasiBot(intents, logger, config);
+        client = new HasiBot(intents, logger, config);
 
         client.Login(token);
 
@@ -26,8 +27,5 @@ public class Main {
             client.Logoff();
         }));
     
-
-//        client.SetActivity("hasi help | Play.HasiCraft.net", HasiBot.ActivityType.Streaming, "https://twitch.tv/hasibixlive");
-        
     }
 }

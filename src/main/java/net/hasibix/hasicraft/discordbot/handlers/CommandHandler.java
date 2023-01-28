@@ -58,7 +58,7 @@ public class CommandHandler extends ListenerAdapter {
             this.logger.Error(e.toString());
         }
     }
-
+    
     public void addCommand(Command command) {
         for (Command cmd : commands) {
             if (cmd.name.equals(command.name)) {

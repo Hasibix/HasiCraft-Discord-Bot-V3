@@ -150,10 +150,11 @@ public class HasiBot {
             this.bot = builder.build();
 
             commandHandler.Initialize(this.bot, "config.yml", this.logger, this.config);
+            eventHandler.Initialize(logger);
 
             bot.addEventListener(commandHandler);
             bot.addEventListener(interactionHandler);
-            bot.addEventListener(eventHandler);
+            eventHandler.registerEvents(bot);
 
             SelfUser botUser = this.bot.getSelfUser();
             String botTag = botUser.getAsTag();
@@ -166,7 +167,7 @@ public class HasiBot {
 
     public void Logoff() {
         bot.shutdown();
-        logger.Log("HasiBot: Logoff process has succeed.");
+        logger.Log("[Discord] Logoff process has succeed.");
     }
 
     public void SetActivity(@Nonnull String text, @Nonnull ActivityType activityType, @Nullable String url) {
