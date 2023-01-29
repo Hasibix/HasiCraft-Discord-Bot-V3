@@ -2,16 +2,16 @@ package net.hasibix.hasicraft.discordbot.models.client.responsebuilders;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.annotation.Nullable;
 
 import net.dv8tion.jda.api.MessageBuilder;
-import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
 
 public class Message {
     public @Nullable String content;
     public @Nullable List<Embed> embeds;
+    public @Nullable List<ActionRow> actionRows;
 
     public Message(@Nullable String content) {
         this.content = content;
@@ -22,27 +22,20 @@ public class Message {
         embeds.add(embed);
     }
 
-    public void Send(MessageChannel channel) {
-        List<MessageEmbed> embedList = new ArrayList<MessageEmbed>();
-        for (Embed embed : embeds) {
-            embedList.add(embed.Build());
-        }
-        net.dv8tion.jda.api.entities.Message response = new MessageBuilder()
-            .append(content)
-            .setEmbeds(embedList)
-            .build();
-        channel.sendMessage(response).queue();
+    public void AddActionRow(ActionRow actionRow) {
+        actionRows.add(actionRow);
     }
 
-    public void Reply(net.dv8tion.jda.api.entities.Message message) {
+    public net.dv8tion.jda.api.entities.Message Build() {
         List<MessageEmbed> embedList = new ArrayList<MessageEmbed>();
-        for (Embed embed : embeds) {
+        for (Embed embed : this.embeds) {
             embedList.add(embed.Build());
         }
         net.dv8tion.jda.api.entities.Message response = new MessageBuilder()
-            .append(content)
+            .append(this.content)
             .setEmbeds(embedList)
             .build();
-        message.reply(response).queue();
+        
+        return response;
     }
 }

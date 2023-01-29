@@ -34,13 +34,13 @@ public class Pages {
     public void Reply(@Nonnull Message message) {
         net.hasibix.hasicraft.discordbot.models.client.responsebuilders.Message response = new net.hasibix.hasicraft.discordbot.models.client.responsebuilders.Message(pages.get(0).text);
         response.AddEmbed(pages.get(0).embed);
-        response.Reply(message);
+        Response.Reply(response, message);
     }
 
     public void Send(@Nonnull MessageChannel channel) {
         net.hasibix.hasicraft.discordbot.models.client.responsebuilders.Message response = new net.hasibix.hasicraft.discordbot.models.client.responsebuilders.Message(pages.get(0).text);
         response.AddEmbed(pages.get(0).embed);
-        response.Send(channel);
+        Response.Send(response, channel);
     }
 
 }
