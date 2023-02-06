@@ -124,7 +124,7 @@ public class Logger {
     }
 
     public void Error(String text) {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
         LocalDateTime now = LocalDateTime.now();
         System.err.println(Color.CYAN + dtf.format(now) + " | " + Color.RED + "ERR: " +  Color.WHITE + text);
         if(logsFolder != null) {
@@ -133,7 +133,7 @@ public class Logger {
     }
 
     public void Warning(String text) {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
         LocalDateTime now = LocalDateTime.now();
         System.err.println(Color.CYAN + dtf.format(now) + " | " + Color.YELLOW + "WARN: " +  Color.WHITE + text);
         if(logsFolder != null) {
@@ -142,7 +142,7 @@ public class Logger {
     }
 
     public void FatalError(String text) {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
         LocalDateTime now = LocalDateTime.now();
         System.err.println(Color.CYAN + dtf.format(now) + " | " + Color.RED_BOLD + "FATAL: " +  Color.WHITE + text);
         if(logsFolder != null) {

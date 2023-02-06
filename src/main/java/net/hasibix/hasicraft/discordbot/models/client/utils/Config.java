@@ -37,10 +37,10 @@ public class Config {
             Map<String, Object> properties = yaml.load(inputStream);
             config = new ConfigObject(properties);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
             return;
         }
     }
+
 
     public ConfigObject getConfig() {
         return config;
