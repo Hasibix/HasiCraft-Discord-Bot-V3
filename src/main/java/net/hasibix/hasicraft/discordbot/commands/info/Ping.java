@@ -4,6 +4,8 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.hasibix.hasicraft.discordbot.models.client.builders.Command;
 import net.hasibix.hasicraft.discordbot.models.client.builders.HasiBot;
+import net.hasibix.hasicraft.discordbot.models.client.responsebuilders.Response;
+import net.hasibix.hasicraft.discordbot.models.client.responsebuilders.Message;
 
 public class Ping {
     public static void register() {
@@ -15,10 +17,10 @@ public class Ping {
             "Info",
             new OptionData[]{},
             (client, event, args) -> {
-                event.getMessage().reply("Pong!").mentionRepliedUser(false).queue();
+                Response.Reply(new Message("Pong!"), event.getMessage(), false);
             },
             (client, event, args) -> {
-                event.reply("Pong!").queue();
+                Response.CommandReply(new Message("Pong!"), event, false);
             }
         );
         

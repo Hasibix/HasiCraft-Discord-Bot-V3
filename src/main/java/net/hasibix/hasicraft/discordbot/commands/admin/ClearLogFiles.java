@@ -1,0 +1,49 @@
+package net.hasibix.hasicraft.discordbot.commands.admin;
+
+import java.io.File;
+
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.hasibix.hasicraft.discordbot.models.client.builders.Command;
+import net.hasibix.hasicraft.discordbot.models.client.builders.HasiBot;
+import net.hasibix.hasicraft.discordbot.models.client.responsebuilders.Response;
+import net.hasibix.hasicraft.discordbot.models.client.responsebuilders.Message;
+
+public class ClearLogFiles {
+    public static void register() {
+        Command command = new Command(
+            "clear-log-files",
+            new String[]{"clear-logs"},
+            "Clears all log files.",
+            new Permission[]{Permission.ADMINISTRATOR},
+            "Admin",
+            new OptionData[]{},
+            (client, event, args) -> {
+                if(event.getAuthor().getId().equals(event.getGuild().getOwnerId())) {
+                    purgeDirectory(new File("logs/"));
+                    Response.Reply(new Message(HasiBot.commandHandler.successEmoji + " | Successfully cleared all log files!"), event.getMessage(), false);
+                } else {
+                    Response.Reply(new Message(HasiBot.commandHandler.errorEmoji + " | You need to be the owner of this server to run this command!"), event.getMessage(), false);
+                }
+            },
+            (client, event, args) -> {
+                if(event.getMember().getId().equals(event.getGuild().getOwnerId())) {
+                    purgeDirectory(new File("logs/"));
+                    Response.CommandReply(new Message(HasiBot.commandHandler.successEmoji + " | Successfully cleared all log files!"), event, false);
+                } else {
+                    Response.CommandReply(new Message(HasiBot.commandHandler.errorEmoji + " | You need to be the owner of this server to run this command!"), event, false);
+                }
+            }
+        );
+        
+        HasiBot.commandHandler.addCommand(command);
+    }
+
+    private static void purgeDirectory(File dir) {
+        for (File file: dir.listFiles()) {
+            if (file.isDirectory())
+                purgeDirectory(file);
+            file.delete();
+        }
+    }
+}

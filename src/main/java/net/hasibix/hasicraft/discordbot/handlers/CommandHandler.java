@@ -10,6 +10,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -20,30 +21,32 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.hasibix.hasicraft.discordbot.models.client.builders.Command;
+import net.hasibix.hasicraft.discordbot.models.client.responsebuilders.Message;
+import net.hasibix.hasicraft.discordbot.models.client.responsebuilders.Response;
 import net.hasibix.hasicraft.discordbot.models.client.utils.Logger;
-import net.hasibix.hasicraft.discordbot.models.client.utils.Config.ConfigObject;
+import net.hasibix.hasicraft.discordbot.models.client.utils.Config;
 import net.hasibix.hasicraft.discordbot.utils.ClassFinder;
 import net.hasibix.hasicraft.discordbot.utils.EqualsArray;
 
 public class CommandHandler extends ListenerAdapter {
-    public ConfigObject config;
-    String prefix;
-    String errorEmoji;
-    String successEmoji;
-    String warningEmoji;
-    JDA client;
-    Logger logger;
+    public Config config;
+    private String prefix;
+    public String errorEmoji;
+    public String successEmoji;
+    public String warningEmoji;
+    private JDA client;
+    private Logger logger;
 
     public List<Command> commands;
 
-    public void Initialize(JDA client, String pathToConfig, Logger logger, ConfigObject config) {
+    public void Initialize(JDA client, String pathToConfig, Logger logger, Config config) {
         this.config = config;
         this.commands = new ArrayList<Command>();
         this.logger = logger;
-        this.prefix = (String) config.get("prefix");
-        this.errorEmoji = ":x:";
-        this.successEmoji = ":white_check_mark:";
-        this.warningEmoji = ":warning:";
+        this.prefix = config.get("prefix", String.class);
+        this.errorEmoji = config.get("emoji", "error", String.class);
+        this.successEmoji = config.get("emoji", "success", String.class);
+        this.warningEmoji = config.get("emoji", "warning", String.class);
         this.client = client;
 
         String packageName = "net.hasibix.hasicraft.discordbot.commands";
@@ -99,8 +102,15 @@ public class CommandHandler extends ListenerAdapter {
                         if(hasPerms) {
                             i.run.accept(client, event, args);
                             commandFound = true;
-                        } else {                            
-                            event.getMessage().reply(errorEmoji + " | You don't have specified permissions to execute this command! | " + i.permissions).queue();
+                        } else {
+                            List<String> permList = new ArrayList<String>();
+                            for (Permission perm : i.permissions) {
+                                permList.add(perm.getName());
+                            }
+                            String[] permArray = permList.toArray(new String[permList.size()]);
+                            String perms = String.join(",\n", permArray);
+                            Message msg = new Message(errorEmoji + " | You don't have specified permissions to execute this command! [" + perms + "]");
+                            Response.Reply(msg, event.getMessage(), false);
                             commandFound = true;
                         }
                         break;
@@ -110,7 +120,9 @@ public class CommandHandler extends ListenerAdapter {
             }
 
             if(!commandFound) {
-                event.getMessage().reply(errorEmoji + " | Command not found!").queue();
+                Message msg = new Message(errorEmoji + " | Command not found!");
+                Response.Reply(msg, event.getMessage(), false);
+                commandFound = true;
             }
         }
     }
@@ -140,8 +152,15 @@ public class CommandHandler extends ListenerAdapter {
                         if(hasPerms) {
                             i.slashrun.accept(client, event, args);
                             commandFound = true;
-                        } else {                            
-                            event.reply(errorEmoji + " | You don't have specified permissions to execute this command! | " + i.permissions).queue();
+                        } else {              
+                            List<String> permList = new ArrayList<String>();
+                            for (Permission perm : i.permissions) {
+                                permList.add(perm.getName());
+                            }
+                            String[] permArray = permList.toArray(new String[permList.size()]);
+                            String perms = String.join(",\n", permArray);
+                            Message msg = new Message(errorEmoji + " | You don't have specified permissions to execute this command! [" + perms + "]");
+                            Response.CommandReply(msg, event, false);
                             commandFound = true;
                         }
                         break;
@@ -149,7 +168,9 @@ public class CommandHandler extends ListenerAdapter {
             }
 
             if(!commandFound) {
-                event.reply(errorEmoji + " | Command not found!").queue();
+                Message msg = new Message(errorEmoji + " | Command not found!");
+                Response.CommandReply(msg, event, false);
+                commandFound = true;
             }
         }
     }

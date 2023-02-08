@@ -15,8 +15,9 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.hasibix.hasicraft.discordbot.handlers.CommandHandler;
 import net.hasibix.hasicraft.discordbot.handlers.EventHandler;
 import net.hasibix.hasicraft.discordbot.handlers.InteractionHandler;
+import net.hasibix.hasicraft.discordbot.handlers.PaginationHandler;
+import net.hasibix.hasicraft.discordbot.models.client.utils.Config;
 import net.hasibix.hasicraft.discordbot.models.client.utils.Logger;
-import net.hasibix.hasicraft.discordbot.models.client.utils.Config.ConfigObject;
 
 public class HasiBot {
 
@@ -44,12 +45,13 @@ public class HasiBot {
         ALL_INTENTS
     }
 
-    JDA bot;
-    public ConfigObject config;
+    private JDA bot;
+    public Config config;
     public Logger logger;
     public static CommandHandler commandHandler;
     public static EventHandler eventHandler;
     public static InteractionHandler interactionHandler;
+    public static PaginationHandler paginationHandler;
 
     static Collection<GatewayIntent> mapIntentsToGatewayIntents(@Nullable Intent[] intents) {
 
@@ -128,7 +130,7 @@ public class HasiBot {
 
     Collection<GatewayIntent> gatewayIntents;
 
-    public HasiBot(@Nullable Intent[] intents, Logger logger, ConfigObject config) {
+    public HasiBot(@Nullable Intent[] intents, Logger logger, Config config) {
         this.logger = logger;
         this.config = config;
         this.gatewayIntents = mapIntentsToGatewayIntents(intents);
@@ -161,13 +163,17 @@ public class HasiBot {
 
             this.logger.Log("[Discord] Logged in as " + botTag);
         } catch (LoginException e) {
-            this.logger.FatalError("LoginException occured!\n" + e);
+            this.logger.FatalError("LoginException occured!", e);
         }
     }
 
     public void Logoff() {
         bot.shutdown();
         logger.Log("[Discord] Logoff process has succeed.");
+    }
+
+    public JDA GetClientRaw() {
+        return bot;
     }
 
     public void SetActivity(@Nonnull String text, @Nonnull ActivityType activityType, @Nullable String url) {

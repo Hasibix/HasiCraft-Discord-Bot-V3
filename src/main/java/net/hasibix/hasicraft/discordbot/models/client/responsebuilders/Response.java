@@ -2,11 +2,6 @@ package net.hasibix.hasicraft.discordbot.models.client.responsebuilders;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.GenericCommandInteractionEvent;
@@ -27,25 +22,14 @@ public class Response {
             action.setActionRows(message.actionRows);
         }
         
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        Future<net.dv8tion.jda.api.entities.Message> future = executor.submit(new Callable<net.dv8tion.jda.api.entities.Message>() {
-            public net.dv8tion.jda.api.entities.Message call() throws Exception {
-                return action.complete();
-            }
-        });
-
         net.dv8tion.jda.api.entities.Message msg;
 
         try {
-            msg = future.get();
-            executor.shutdown();
+            msg = action.complete();
             return msg;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (RuntimeException  e) {
             e.printStackTrace();
         }
-        executor.shutdown();
 
         return null;
     }
@@ -62,25 +46,14 @@ public class Response {
             action.setActionRows(message.actionRows);
         }
         
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        Future<net.dv8tion.jda.api.entities.Message> future = executor.submit(new Callable<net.dv8tion.jda.api.entities.Message>() {
-            public net.dv8tion.jda.api.entities.Message call() throws Exception {
-                return action.complete();
-            }
-        });
-
         net.dv8tion.jda.api.entities.Message msg;
 
         try {
-            msg = future.get();
-            executor.shutdown();
+            msg = action.complete();
             return msg;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (RuntimeException  e) {
             e.printStackTrace();
         }
-        executor.shutdown();
 
         return null;
     }
@@ -90,25 +63,14 @@ public class Response {
         if(newMessage.actionRows.size() > 0) {
             action.setActionRows(newMessage.actionRows);
         }
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        Future<net.dv8tion.jda.api.entities.Message> future = executor.submit(new Callable<net.dv8tion.jda.api.entities.Message>() {
-            public net.dv8tion.jda.api.entities.Message call() throws Exception {
-                return action.complete();
-            }
-        });
-
         net.dv8tion.jda.api.entities.Message msg;
 
         try {
-            msg = future.get();
-            executor.shutdown();
+            msg = action.complete();
             return msg;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (RuntimeException  e) {
             e.printStackTrace();
         }
-        executor.shutdown();
 
         return null;
     }
@@ -117,26 +79,14 @@ public class Response {
         net.dv8tion.jda.api.entities.Message response = message.Build();
         ReplyCallbackAction action = event.reply(response).setEphemeral(ephemeral);
 
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        Future<InteractionHook> future = executor.submit(new Callable<InteractionHook>() {
-            public InteractionHook call() throws Exception {
-                return action.complete();
-            }
-        });
-
         InteractionHook msg;
 
         try {
-            msg = future.get();
-            executor.shutdown();
+            msg = action.complete();
             return msg;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (RuntimeException e) {
             e.printStackTrace();
         }
-
-        executor.shutdown();
         return null;
     }
 }

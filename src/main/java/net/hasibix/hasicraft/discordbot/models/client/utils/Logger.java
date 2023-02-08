@@ -7,8 +7,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
+import org.slf4j.LoggerFactory;
 import javax.annotation.Nullable;
+
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 public class Logger {
     @Nullable String logsFolder;
@@ -87,6 +89,8 @@ public class Logger {
         public static final String WHITE_BACKGROUND_BRIGHT = "\033[0;107m";   // WHITE
     }
 
+    private static org.slf4j.Logger logger = LoggerFactory.getLogger(Logger.class);
+
     public Logger (@Nullable String logsFolder) {
         if(logsFolder != null) {
             this.logsFolder = logsFolder;
@@ -108,8 +112,7 @@ public class Logger {
                 return;
             }
           } catch (IOException e) {
-            System.out.println("ERR: An error occurred in LOGGER.");
-            e.printStackTrace();
+            System.err.println(Color.CYAN + dtf.format(now) + " | " + Color.RED + "ERR: " +  Color.WHITE + "An error occurred in LOGGER.\n" + e.toString());
           }
     }
 
@@ -135,7 +138,7 @@ public class Logger {
     public void Warning(String text) {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
         LocalDateTime now = LocalDateTime.now();
-        System.err.println(Color.CYAN + dtf.format(now) + " | " + Color.YELLOW + "WARN: " +  Color.WHITE + text);
+        System.out.println(Color.CYAN + dtf.format(now) + " | " + Color.YELLOW + "WARN: " +  Color.WHITE + text);
         if(logsFolder != null) {
             WriteLog(text, logsFolder, "warning", now);            
         }
@@ -148,5 +151,26 @@ public class Logger {
         if(logsFolder != null) {
             WriteLog(text, logsFolder, "fatalerror", now);            
         }
+    }
+
+    //Exeptions
+    public void Log(String text, Exception e) {
+        String stacktrace = ExceptionUtils.getStackTrace(e);
+        Log(text + "\n" + stacktrace);
+    }
+
+    public void Error(String text, Exception e) {
+        String stacktrace = ExceptionUtils.getStackTrace(e);
+        Error(text + "\n" + stacktrace);
+    }
+
+    public void Warning(String text, Exception e) {
+        String stacktrace = ExceptionUtils.getStackTrace(e);
+        Warning(text + "\n" + stacktrace);
+    }
+
+    public void FatalError(String text, Exception e) {
+        String stacktrace = ExceptionUtils.getStackTrace(e);
+        FatalError(text + "\n" + stacktrace);
     }
 }

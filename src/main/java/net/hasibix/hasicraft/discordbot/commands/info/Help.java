@@ -8,14 +8,14 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.hasibix.hasicraft.discordbot.models.client.builders.Command;
 import net.hasibix.hasicraft.discordbot.models.client.builders.HasiBot;
 import net.hasibix.hasicraft.discordbot.models.client.responsebuilders.Embed;
-import net.hasibix.hasicraft.discordbot.models.client.responsebuilders.Pages;
+import net.hasibix.hasicraft.discordbot.models.client.responsebuilders.Pagination;
 
 public class Help {
     public static void register() {
         Command command = new Command(
             "help",
             new String[]{},
-            "Lists all commands",
+            "Lists all commands.",
             new Permission[]{},
             "Info",
             new OptionData[]{},
@@ -27,15 +27,14 @@ public class Help {
                 String[] commandNameArray = commandNames.toArray(new String[commandNames.size()]);
                 String joined = String.join(",\n", commandNameArray);
 
-                Pages pagination = new Pages();
+                Pagination pagination = new Pagination();
 
                 Embed embed = new Embed()
                     .setTitle(client.getSelfUser().getName() + "\'s command list:", null)
                     .setColor(Color.red)
                     .setDescription("```\n" + joined + "\n```");
                 
-                Pages.Page page = pagination.new Page(null, embed);
-
+                Pagination.Page page = pagination.new Page(null, embed);
                 pagination.AddPage(page);
                 pagination.Reply(event.getMessage(), false);
             },
@@ -47,14 +46,14 @@ public class Help {
                 String[] commandNameArray = commandNames.toArray(new String[commandNames.size()]);
                 String joined = String.join(",\n", commandNameArray);
 
-                Pages pagination = new Pages();
+                Pagination pagination = new Pagination();
 
                 Embed embed = new Embed()
                     .setTitle(client.getSelfUser().getName() + "\' command list:", null)
                     .setColor(Color.red)
                     .setDescription("```\n" + joined + "\n```");
                 
-                Pages.Page page = pagination.new Page(null, embed);
+                Pagination.Page page = pagination.new Page(null, embed);
 
                 pagination.AddPage(page);
                 pagination.CommandReply(event);
