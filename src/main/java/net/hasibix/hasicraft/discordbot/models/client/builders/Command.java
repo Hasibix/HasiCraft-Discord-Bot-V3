@@ -1,7 +1,6 @@
 package net.hasibix.hasicraft.discordbot.models.client.builders;
 
 import javax.annotation.Nonnull;
-
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;

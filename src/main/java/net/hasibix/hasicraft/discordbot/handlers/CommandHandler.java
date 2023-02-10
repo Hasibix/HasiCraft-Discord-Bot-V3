@@ -6,9 +6,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import javax.annotation.Nonnull;
-
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
@@ -58,18 +56,19 @@ public class CommandHandler extends ListenerAdapter {
                 method.invoke(null);
             }
         } catch (ClassNotFoundException | InvocationTargetException | IllegalAccessException | IOException | NoSuchMethodException e) {
-            this.logger.Error(e.toString());
+            this.logger.error("[HasiBot.CommandHandler]: An exception occurred while trying to load commands!");
+            this.logger.trace(e);
         }
     }
     
     public void addCommand(Command command) {
         for (Command cmd : commands) {
             if (cmd.name.equals(command.name)) {
-                this.logger.Error("Command with name " + cmd.name + " already exists");
+                this.logger.error("[HasiBot.CommandHandler]: Command with name " + cmd.name + " already exists");
                 return;
             }
         }
-        this.logger.Log("Added command: " + command.name);
+        this.logger.info("[HasiBot.CommandHandler]: Added command: " + command.name);
         commands.add(command);
     }
 

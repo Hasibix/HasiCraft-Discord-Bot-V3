@@ -27,7 +27,8 @@ public class EventHandler {
                 }
             }
         } catch (ClassNotFoundException | InstantiationException | InvocationTargetException | IllegalAccessException | IOException | NoSuchMethodException e) {
-            this.logger.Error(e.toString());
+            this.logger.error("[HasiBot.EventHandler]: An exception occurred while trying to load events!");
+            this.logger.trace(e);
         }
     }
 

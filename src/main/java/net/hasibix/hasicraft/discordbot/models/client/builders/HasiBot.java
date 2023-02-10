@@ -2,11 +2,9 @@ package net.hasibix.hasicraft.discordbot.models.client.builders;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.login.LoginException;
-
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -47,7 +45,7 @@ public class HasiBot {
 
     private JDA bot;
     public Config config;
-    public Logger logger;
+    public static Logger logger;
     public static CommandHandler commandHandler;
     public static EventHandler eventHandler;
     public static InteractionHandler interactionHandler;
@@ -130,15 +128,15 @@ public class HasiBot {
 
     Collection<GatewayIntent> gatewayIntents;
 
-    public HasiBot(@Nullable Intent[] intents, Logger logger, Config config) {
-        this.logger = logger;
+    public HasiBot(@Nullable Intent[] intents, Logger loggeer, Config config) {
+        logger = loggeer;
         this.config = config;
         this.gatewayIntents = mapIntentsToGatewayIntents(intents);
     }
 
     public void Login(String token) {
         if(token == null | token == "" | token == " ") {
-            logger.FatalError("A Bot token cannot be null.");
+            logger.fatal("[HasiBot]: A Bot token cannot be null.");
             System.exit(1);
         }
 
@@ -151,7 +149,7 @@ public class HasiBot {
             builder.setEnabledIntents(gatewayIntents);
             this.bot = builder.build();
 
-            commandHandler.Initialize(this.bot, "config.yml", this.logger, this.config);
+            commandHandler.Initialize(this.bot, "config.yml", logger, this.config);
             eventHandler.Initialize(logger);
 
             bot.addEventListener(commandHandler);
@@ -161,15 +159,16 @@ public class HasiBot {
             SelfUser botUser = this.bot.getSelfUser();
             String botTag = botUser.getAsTag();
 
-            this.logger.Log("[Discord] Logged in as " + botTag);
+            logger.info("[HasiBot]: Logged in as " + botTag);
         } catch (LoginException e) {
-            this.logger.FatalError("LoginException occured!", e);
+            logger.fatal("[HasiBot]: LoginException occured!");
+            logger.trace(e);
         }
     }
 
     public void Logoff() {
         bot.shutdown();
-        logger.Log("[Discord] Logoff process has succeed.");
+        logger.info("[HasiBot]: Logoff process has succeed.");
     }
 
     public JDA GetClientRaw() {
