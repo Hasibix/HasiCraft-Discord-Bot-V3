@@ -19,12 +19,14 @@ public class Message {
         this.actionRows = new ArrayList<>();
     }
 
-    public void AddEmbed(Embed embed) {
+    public Message AddEmbed(Embed embed) {
         this.embeds.add(embed);
+        return this;
     }
 
-    public void AddActionRow(ItemComponent... components) {
+    public Message AddActionRow(ItemComponent... components) {
         actionRows.add(ActionRow.of(components));
+        return this;
     }
 
     public net.dv8tion.jda.api.entities.Message Build() {
@@ -33,7 +35,7 @@ public class Message {
             embedList.add(embed.Build());
         }
         net.dv8tion.jda.api.entities.Message response = new MessageBuilder()
-            .append(this.content)
+            .append(this.content != null ? this.content : "")
             .setEmbeds(embedList)
             .build();
         

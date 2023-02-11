@@ -1,5 +1,7 @@
 package net.hasibix.hasicraft.discordbot;
 
+import java.time.LocalDateTime;
+
 import io.github.cdimascio.dotenv.Dotenv;
 import net.hasibix.hasicraft.discordbot.models.client.builders.HasiBot;
 import net.hasibix.hasicraft.discordbot.models.client.utils.Config;
@@ -9,6 +11,7 @@ import net.hasibix.hasicraft.discordbot.models.mongodb.MongoDBClient;
 public class Main {
     public static Logger logger;
     public static HasiBot client;
+    public static LocalDateTime startTime;
     public static void main(String[] args) {
         Dotenv dotenv = Dotenv.configure().load();
         String token = dotenv.get("BOT_TOKEN");
@@ -28,6 +31,7 @@ public class Main {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             client.Logoff();
         }));
-    
+        
+        startTime = LocalDateTime.now();
     }
 }
