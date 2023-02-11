@@ -41,7 +41,7 @@ public class Config {
                     System.exit(1);
                 }
             } catch (IOException er) {
-                System.err.println("[\033[0;36m" + dtf.format(now) + " \033[0m] " + " [" + "\033[1;31m" + "FATAL\033[0m] " +  "\033[0m[Config]: " + "Unable to create a config file. Please create one manually!");
+                System.err.println("[\033[0;36m" + dtf.format(now) + "\033[0m]" + " [" + "\033[1;31m" + "FATAL\033[0m] " +  "\033[0m[Config]: " + "Unable to create a config file. Please create one manually!");
                 System.exit(1);
             }
         }
