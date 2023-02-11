@@ -2,9 +2,7 @@ prefix:
 emoji:
     success:
     error:
-    music:
     warning:
-    musicNote:
 client_id:
 spotify_client_id:
 minecraft_server_ip:

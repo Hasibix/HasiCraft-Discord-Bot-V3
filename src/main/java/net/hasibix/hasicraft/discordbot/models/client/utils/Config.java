@@ -1,14 +1,18 @@
 package net.hasibix.hasicraft.discordbot.models.client.utils;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.yaml.snakeyaml.Yaml;
 
 public class Config {
@@ -31,13 +35,25 @@ public class Config {
                 File file = new File("config.yml");
                 if (file.createNewFile()) {
                     FileWriter writer = new FileWriter(file);
-                    writer.write("prefix: \'!\'\nemoji:\n success: \':white_check_mark:\'\n error: \':x:\'\n music: \':musical_note:\'\n warning: \':warning:\'\n musicNote: \':notes:\'\nclient_id: \'00000000000000000\'\nspotify_client_id: \'xxxx000x000x0xx00x000xx0x000x000\'\nminecraft_server_ip: \'0.0.0.0\'\nminecraft_server_port: 5000");
+                    String data = getResourceFileAsString("config.yml");
+                    writer.write(data);
                     writer.close();
                     System.exit(1);
                 }
             } catch (IOException er) {
                 System.err.println("[\033[0;36m" + dtf.format(now) + " \033[0m] " + " [" + "\033[1;31m" + "FATAL\033[0m] " +  "\033[0m[Config]: " + "Unable to create a config file. Please create one manually!");
                 System.exit(1);
+            }
+        }
+    }
+
+    private String getResourceFileAsString(String fileName) throws IOException {
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        try (InputStream is = classLoader.getResourceAsStream(fileName)) {
+            if (is == null) return null;
+            try (InputStreamReader isr = new InputStreamReader(is);
+                BufferedReader reader = new BufferedReader(isr)) {
+                return reader.lines().collect(Collectors.joining(System.lineSeparator()));
             }
         }
     }
