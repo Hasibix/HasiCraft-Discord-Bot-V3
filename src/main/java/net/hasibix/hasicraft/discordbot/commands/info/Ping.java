@@ -31,7 +31,6 @@ public class Ping {
                 int mb = 1024 * 1024;
 
                 Embed embed = new Embed()
-                .setAuthor(client.getSelfUser().getAsTag(), null, client.getSelfUser().getAvatarUrl())
                 .setColor(Color.BLACK)
                 .setTitle("Pong!", null)
 
@@ -64,7 +63,6 @@ public class Ping {
                 int mb = 1024 * 1024;
 
                 Embed embed = new Embed()
-                .setAuthor(client.getSelfUser().getAsTag(), null, client.getSelfUser().getAvatarUrl())
                 .setColor(Color.BLACK)
                 .setTitle("Pong!", null)
 
