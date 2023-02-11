@@ -8,6 +8,7 @@ This project is **COMPLETELY** free to use. Anyone can make use of this project 
 
 More docs and credits comming soon.
 
+```
 Copyright © 2023 Hasibix Hasib. All Rights Reserved
 
 This program is free software: you can redistribute
