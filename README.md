@@ -2,11 +2,11 @@
 
 This repo contains the source code for [HasiCraft](https://discord.gg/RX5azB3NwP)'s Discord Bot version 3.0. This bot is written in Java using Java Discord API (JDA). Previously, it was written in Javascript using NodeJS and Discord.JS. This project is COMPLETELY free to use. Anyone can use this project for any kind of open source use. More docs and credits comming soon.
 
-------------------------------------------------------------------
-```
+This version of the bot is written in Java using the **J**ava **D**iscord **A**PI (JDA). Previously, it was written in Javascript using NodeJS and Discord.js. 
 
-                                        !!! Copyright Notice !!!
+This project is **COMPLETELY** free to use. Anyone can make use of this project for any kind of open source use, so long as said use is also under the AGPL license. For more info, consult [LICENSE.md](https://github.com/Hasibix/HasiCraft-Discord-Bot-V3/blob/master/LICENSE.md)
 
+More docs and credits comming soon.
 
 Copyright © 2023 Hasibix Hasib. All Rights Reserved
 
