@@ -11,7 +11,7 @@ More docs and credits coming soon.
 ---------------------------------------------------
 
 ### License info
-```
+```html
 Copyright © 2023 Hasibix Hasib. All Rights Reserved
 
 This program is free software: you can redistribute
@@ -24,5 +24,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
 or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
 
 You should have received a copy of the GNU Affero General Public License
-along with this program. If not, see <https://www.gnu.org/licenses/>.
+along with this program. If not, see <link>https://www.gnu.org/licenses</link>.
 ```
