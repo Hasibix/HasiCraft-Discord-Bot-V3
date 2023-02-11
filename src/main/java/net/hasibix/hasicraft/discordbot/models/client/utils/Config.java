@@ -30,7 +30,7 @@ public class Config {
         } catch (FileNotFoundException e) {
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
             LocalDateTime now = LocalDateTime.now();
-            System.err.println("[\033[0;36m" + dtf.format(now) + " \033[0m] " + " [" + "\033[1;31m" + "FATAL\033[0m] " +  "\033[0m[Config]: " + "Config file not found! Creating one..");
+            System.err.println("[\033[0;36m" + dtf.format(now) + "\033[0m]" + " [" + "\033[1;31m" + "FATAL\033[0m] " +  "\033[0m[Config]: " + "Config file not found! Creating one..");
             try {
                 File file = new File("config.yml");
                 if (file.createNewFile()) {
