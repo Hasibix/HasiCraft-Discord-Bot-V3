@@ -26,3 +26,6 @@ or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License f
 You should have received a copy of the GNU Affero General Public License
 along with this program. If not, see <link> https://www.gnu.org/licenses </link>.
 ```
+<big><pre>
+**void** Click ([**Keycode**](#keycode) key) **const**
+</pre></big>
