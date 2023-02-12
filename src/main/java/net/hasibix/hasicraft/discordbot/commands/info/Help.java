@@ -1,7 +1,9 @@
 package net.hasibix.hasicraft.discordbot.commands.info;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.awt.Color;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -19,7 +21,7 @@ public class Help {
             new Permission[]{},
             "Info",
             new OptionData[]{},
-            (client, event, args) -> {
+            (client, event, args, logger) -> {
                 List<String> commandNames = new ArrayList<String>();
                 for (Command i : HasiBot.commandHandler.commands) {
                     commandNames.add(i.name);
@@ -27,7 +29,7 @@ public class Help {
                 String[] commandNameArray = commandNames.toArray(new String[commandNames.size()]);
                 String joined = String.join(",\n", commandNameArray);
 
-                Pagination pagination = new Pagination();
+                Pagination pagination = new Pagination(client);
 
                 Embed embed = new Embed()
                     .setTitle(client.getSelfUser().getName() + "\'s command list:", null)
@@ -35,27 +37,42 @@ public class Help {
                     .setDescription("```\n" + joined + "\n```");
                 
                 Pagination.Page page = pagination.new Page(null, embed);
-                pagination.AddPage(page);
+                pagination.addPage(page);
                 pagination.Reply(event.getMessage(), false);
             },
-            (client, event, args) -> {
-                List<String> commandNames = new ArrayList<String>();
+            (client, event, args, logger) -> {
+                Map<String, List<String>> commandzz = new HashMap<String, List<String>>();
                 for (Command i : HasiBot.commandHandler.commands) {
-                    commandNames.add(i.name);
+                    if(!commandzz.containsKey(i.category)) {
+                        commandzz.put(i.category, new ArrayList<String>());
+                    }
+                    commandzz.get(i.category).add(i.name);
                 }
-                String[] commandNameArray = commandNames.toArray(new String[commandNames.size()]);
-                String joined = String.join(",\n", commandNameArray);
 
-                Pagination pagination = new Pagination();
+                Pagination pagination = new Pagination(client);
+                List<Pagination.Page> pages = new ArrayList<Pagination.Page>(commandzz.size());
 
-                Embed embed = new Embed()
-                    .setTitle(client.getSelfUser().getName() + "\' command list:", null)
-                    .setColor(Color.red)
-                    .setDescription("```\n" + joined + "\n```");
-                
-                Pagination.Page page = pagination.new Page(null, embed);
+                int pageNumber = 0;
 
-                pagination.AddPage(page);
+                commandzz.forEach((key, value) -> {
+                    String[] commands = value.toArray(new String[value.size()]);
+                    pages.add(
+                        pagination.new Page(
+                            null,
+                            new Embed()
+                                .setTitle(client.getSelfUser().getName() + "\'s command list:", null)
+                                .setColor(Color.red)
+                                .setDescription("**" + key.toUpperCase() +"**```\n" + String.join(",\n", commands) + "\n```")
+                                .setFooter("Page "+ commandzz +"/" + commandzz.size(), null)
+                        )
+                    );
+                    
+                });
+
+                for (Pagination.Page i : pages) {
+                    pagination.addPage(i);
+                }
+
                 pagination.CommandReply(event);
             }
         );

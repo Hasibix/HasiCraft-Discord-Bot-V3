@@ -5,10 +5,11 @@ import com.mongodb.MongoClientSettings;
 import com.mongodb.WriteConcern;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
-import net.hasibix.hasicraft.discordbot.models.client.builders.HasiBot;
+import net.hasibix.hasicraft.discordbot.models.client.utils.Logger;
 
 public class MongoDBClient {
     MongoClient mongoClient;
+    private Logger LOGGER;
 
     public void Initialize(String uri) {
         MongoClientSettings settings = MongoClientSettings.builder()
@@ -19,8 +20,9 @@ public class MongoDBClient {
         MongoClient mongoClient = MongoClients.create(settings);
 
         this.mongoClient = mongoClient;
+        this.LOGGER = Logger.of(MongoDBClient.class);
 
-        HasiBot.logger.info("[MongoDB]: Successfully connected to server!");
+        this.LOGGER.info("Successfully connected to server!");
     }
 
 }

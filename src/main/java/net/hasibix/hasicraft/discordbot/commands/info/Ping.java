@@ -21,7 +21,7 @@ public class Ping {
             new Permission[]{},
             "Info",
             new OptionData[]{},
-            (client, event, args) -> {
+            (client, event, args, logger) -> {
                 LocalDateTime currentTime = LocalDateTime.now();
                 Duration duration = Duration.between(Main.startTime, currentTime);
                 String uptime = String.format("%dd %dh %dm %ds", duration.toDays(),
@@ -51,9 +51,9 @@ public class Ping {
                 .addField(":books: JDA Version", "5.0.0-alpha.8", true)
                 .addField(":coffee: Java Version", "17.0.6-LTS", true);
 
-                Response.Reply(new Message(null).AddEmbed(embed), event.getMessage(), false);
+                Response.Reply(new Message(null).addEmbed(embed), event.getMessage(), false);
             },
-            (client, event, args) -> {
+            (client, event, args, logger) -> {
                 LocalDateTime currentTime = LocalDateTime.now();
                 Duration duration = Duration.between(Main.startTime, currentTime);
                 String uptime = String.format("%dd %dh %dm %ds", duration.toDays(),
@@ -83,7 +83,7 @@ public class Ping {
                 .addField(":books: JDA Version", "5.0.0-alpha.8", true)
                 .addField(":coffee: Java Version", "17.0.6-LTS", true);
 
-                Response.CommandReply(new Message(null).AddEmbed(embed), event, false);
+                Response.CommandReply(new Message(null).addEmbed(embed), event, false);
             }
         );
         

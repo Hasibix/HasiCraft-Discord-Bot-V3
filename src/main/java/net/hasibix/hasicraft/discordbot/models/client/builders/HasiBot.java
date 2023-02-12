@@ -45,7 +45,7 @@ public class HasiBot {
 
     private JDA bot;
     public Config config;
-    public static Logger logger;
+    private Logger logger;
     public static CommandHandler commandHandler;
     public static EventHandler eventHandler;
     public static InteractionHandler interactionHandler;
@@ -128,29 +128,30 @@ public class HasiBot {
 
     Collection<GatewayIntent> gatewayIntents;
 
-    public HasiBot(@Nullable Intent[] intents, Logger loggeer, Config config) {
-        logger = loggeer;
+    public HasiBot(@Nullable Intent[] intents, Config config) {
+        logger = Logger.of(HasiBot.class);
         this.config = config;
         this.gatewayIntents = mapIntentsToGatewayIntents(intents);
     }
 
     public void Login(String token) {
         if(token == null | token == "" | token == " ") {
-            logger.fatal("[HasiBot]: A Bot token cannot be null.");
+            logger.fatal("A Bot token cannot be null.");
             System.exit(1);
         }
 
         commandHandler = new CommandHandler();
         interactionHandler = new InteractionHandler();
         eventHandler = new EventHandler();
+        paginationHandler = new PaginationHandler();
 
         try {
             JDABuilder builder = JDABuilder.createDefault(token);
             builder.setEnabledIntents(gatewayIntents);
             this.bot = builder.build();
 
-            commandHandler.Initialize(this.bot, "config.yml", logger, this.config);
-            eventHandler.Initialize(logger);
+            commandHandler.Initialize(this.bot, "config.yml", this.config);
+            eventHandler.Initialize();
 
             bot.addEventListener(commandHandler);
             bot.addEventListener(interactionHandler);
@@ -159,16 +160,16 @@ public class HasiBot {
             SelfUser botUser = this.bot.getSelfUser();
             String botTag = botUser.getAsTag();
 
-            logger.info("[HasiBot]: Logged in as " + botTag);
+            logger.info("Logged in as " + botTag);
         } catch (LoginException e) {
-            logger.fatal("[HasiBot]: LoginException occured!");
+            logger.fatal("LoginException occured!");
             logger.trace(e);
         }
     }
 
     public void Logoff() {
         bot.shutdown();
-        logger.info("[HasiBot]: Logoff process has succeed.");
+        logger.info("Logoff process has succeed.");
     }
 
     public JDA GetClientRaw() {

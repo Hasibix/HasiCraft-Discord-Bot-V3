@@ -10,7 +10,8 @@ import javax.annotation.Nullable;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 public class Logger {
-    @Nullable String logsFolder;
+    @Nullable static String logsPath;
+    Class<?> clazz;
     public static class Color {
 
         public static final String RESET = "\033[0m";
@@ -131,33 +132,41 @@ public class Logger {
         return null;
     }
 
-    public Logger (@Nullable String logsFolder) {
-        if(logsFolder != null) {
-            this.logsFolder = logsFolder;
+    private Logger(Class<?> clazz) {
+        this.clazz = clazz;
+    }
+
+    public static Logger of(Class<?> clazz) {
+        return new Logger(clazz);
+    }
+
+    public static void setPath(String path) {
+        if(path != null) {
+            logsPath = path;
         } else {
-            this.logsFolder = null;
+            logsPath = null;
         }
     }
 
     void writeLog(String text, Type type) {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
         LocalDateTime now = LocalDateTime.now();
-        String line = String.format("[%s] [%s] %s", Color.CYAN + dtf.format(now) + Color.RESET, getTypeString(true, type) + Color.RESET, text);
-        String lineNoColor = String.format("[%s] [%s] %s", dtf.format(now), getTypeString(false, type),  text);
+        String line = String.format("[%s] [%s] [%s]: %s", Color.CYAN + dtf.format(now) + Color.RESET, getTypeString(true, type) + Color.RESET, this.clazz.getSimpleName(), text);
+        String lineNoColor = String.format("[%s] [%s] [%s]: %s", dtf.format(now), getTypeString(false, type), this.clazz.getSimpleName(), text);
         System.out.println(line);
 
-        if(this.logsFolder != null) {
+        if(logsPath != null) {
             DateTimeFormatter fdtf = DateTimeFormatter.ofPattern("yyyy.MM.dd.HH.mm.ss");
             try {
-                Files.createDirectories(Paths.get(this.logsFolder));
+                Files.createDirectories(Paths.get(logsPath));
                 Files.writeString(
-                    Paths.get(this.logsFolder + fdtf.format(now) + ".log"),
+                    Paths.get(logsPath + fdtf.format(now) + ".log"),
                     lineNoColor + System.lineSeparator(),
                     StandardOpenOption.CREATE, StandardOpenOption.APPEND
                 );
 
             } catch (IOException e) {
-                String er = String.format("[%s] [%s] [%s]: %s", Color.CYAN + dtf.format(now) + Color.RESET, Color.RED + "ERR" + Color.RESET, "Logger", Color.RESET + "An exception occurred in logger.\n" + ExceptionUtils.getStackTrace(e));
+                String er = String.format("[%s] [%s] [%s]: %s", Color.CYAN + dtf.format(now) + Color.RESET, Color.RED + "ERR" + Color.RESET, Logger.class.getSimpleName(), Color.RESET + "An exception occurred in logger.\n" + ExceptionUtils.getStackTrace(e));
                 System.err.println(er);
             }
         }

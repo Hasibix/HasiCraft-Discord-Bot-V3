@@ -1,9 +1,32 @@
-prefix:
-emoji:
-    success:
-    error:
-    warning:
-client_id:
-spotify_client_id:
-minecraft_server_ip:
-minecraft_server_port:
+# Some bot configurations. Such as prefix, emojis etc.
+prefix: "!" # If not set, will use "!" as the prefix.
+emoji: # If not set, will use default discord emojis.
+    success: ":white_check_mark"
+    error: ":x:"
+    warning: ":warning:"
+client_id: "000000000000000000"
+
+# This field is used ONLY if you have music preset enabled.
+spotify_client_id: "xxxx000x000x0xx00x000xx0x000x000"
+
+# This tells which presets to use. All are true by default.
+presets:
+    admin: true
+    economy: true
+    fun: true
+    giveaway: true
+    info: true
+    leveling: true
+    moderation: true
+    music: true
+    reactionroles: true
+    utility: true
+    captcha: true
+
+# This field depends on whethere this bot is being used for a specific* minecraft discord server or not. If not then set this to null.
+minecraft_server: # Put null here and also remove the next 2 lines below it if you don't need this.
+    address: "0.0.0.0"
+    port: 0000
+
+# This tells the bot who is their owner. THIS FIELD IS REQUIRED!
+ownerId: "000000000000000000"

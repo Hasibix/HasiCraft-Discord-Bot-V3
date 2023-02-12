@@ -12,11 +12,12 @@ import net.hasibix.hasicraft.discordbot.utils.ClassFinder;
 
 public class EventHandler {
     
-    public Logger logger;
+    private Logger logger;
     public List<ListenerAdapter> events = new ArrayList<ListenerAdapter>();
 
-    public void Initialize(Logger logger) {
+    public void Initialize() {
         String packageName = "net.hasibix.hasicraft.discordbot.events";
+        this.logger = Logger.of(EventHandler.class);
 
         try {
             Class<?>[] eventFiles = ClassFinder.getClassesFromPackage(packageName);
@@ -27,7 +28,7 @@ public class EventHandler {
                 }
             }
         } catch (ClassNotFoundException | InstantiationException | InvocationTargetException | IllegalAccessException | IOException | NoSuchMethodException e) {
-            this.logger.error("[HasiBot.EventHandler]: An exception occurred while trying to load events!");
+            this.logger.error("An exception occurred while trying to load events!");
             this.logger.trace(e);
         }
     }

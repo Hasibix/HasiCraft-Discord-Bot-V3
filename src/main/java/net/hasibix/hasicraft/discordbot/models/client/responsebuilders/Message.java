@@ -19,20 +19,20 @@ public class Message {
         this.actionRows = new ArrayList<>();
     }
 
-    public Message AddEmbed(Embed embed) {
+    public Message addEmbed(Embed embed) {
         this.embeds.add(embed);
         return this;
     }
 
-    public Message AddActionRow(ItemComponent... components) {
+    public Message addActionRow(ItemComponent... components) {
         actionRows.add(ActionRow.of(components));
         return this;
     }
 
-    public net.dv8tion.jda.api.entities.Message Build() {
+    public net.dv8tion.jda.api.entities.Message build() {
         List<MessageEmbed> embedList = new ArrayList<MessageEmbed>();
         for (Embed embed : this.embeds) {
-            embedList.add(embed.Build());
+            embedList.add(embed.build());
         }
         net.dv8tion.jda.api.entities.Message response = new MessageBuilder()
             .append(this.content != null ? this.content : "")
@@ -40,5 +40,10 @@ public class Message {
             .build();
         
         return response;
+    }
+
+    public Message addActionRow(ActionRow actionRow) {
+        actionRows.add(actionRow);
+        return this;
     }
 }

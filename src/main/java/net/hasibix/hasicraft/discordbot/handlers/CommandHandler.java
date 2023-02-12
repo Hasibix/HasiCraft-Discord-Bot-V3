@@ -37,10 +37,10 @@ public class CommandHandler extends ListenerAdapter {
 
     public List<Command> commands;
 
-    public void Initialize(JDA client, String pathToConfig, Logger logger, Config config) {
+    public void Initialize(JDA client, String pathToConfig, Config config) {
         this.config = config;
         this.commands = new ArrayList<Command>();
-        this.logger = logger;
+        this.logger = Logger.of(CommandHandler.class);
         this.prefix = config.get("prefix", String.class);
         this.errorEmoji = config.get("emoji", "error", String.class);
         this.successEmoji = config.get("emoji", "success", String.class);
@@ -52,11 +52,11 @@ public class CommandHandler extends ListenerAdapter {
         try {
             Class<?>[] commandFiles = ClassFinder.getClassesFromPackage(packageName);
             for (Class<?> i : commandFiles) {
-                Method method = i.getDeclaredMethod("register");
-                method.invoke(null);
+                Method registerCmd = i.getDeclaredMethod("register");
+                registerCmd.invoke(null);
             }
         } catch (ClassNotFoundException | InvocationTargetException | IllegalAccessException | IOException | NoSuchMethodException e) {
-            this.logger.error("[HasiBot.CommandHandler]: An exception occurred while trying to load commands!");
+            this.logger.error("An exception occurred while trying to load commands!");
             this.logger.trace(e);
         }
     }
@@ -64,11 +64,11 @@ public class CommandHandler extends ListenerAdapter {
     public void addCommand(Command command) {
         for (Command cmd : commands) {
             if (cmd.name.equals(command.name)) {
-                this.logger.error("[HasiBot.CommandHandler]: Command with name " + cmd.name + " already exists");
+                this.logger.error("Command with name " + cmd.name + " already exists");
                 return;
             }
         }
-        this.logger.info("[HasiBot.CommandHandler]: Added command: " + command.name);
+        this.logger.info("Added command: " + command.name);
         commands.add(command);
     }
 
@@ -99,7 +99,7 @@ public class CommandHandler extends ListenerAdapter {
                         }
                         
                         if(hasPerms) {
-                            i.run.accept(client, event, args);
+                            i.run.accept(this.client, event, args, this.logger);
                             commandFound = true;
                         } else {
                             List<String> permList = new ArrayList<String>();
@@ -149,7 +149,7 @@ public class CommandHandler extends ListenerAdapter {
                         }
                         
                         if(hasPerms) {
-                            i.slashrun.accept(client, event, args);
+                            i.slashrun.accept(this.client, event, args, this.logger);
                             commandFound = true;
                         } else {              
                             List<String> permList = new ArrayList<String>();

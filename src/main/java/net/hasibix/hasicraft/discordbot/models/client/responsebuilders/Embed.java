@@ -56,7 +56,7 @@ public class Embed {
         return this;
     }
 
-    public MessageEmbed Build() {
+    public MessageEmbed build() {
         MessageEmbed embed = builder.build();
         return embed;
     }
