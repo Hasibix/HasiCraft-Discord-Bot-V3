@@ -8,6 +8,7 @@ This project is **COMPLETELY** free to use. Anyone can make use of this project 
 
 Credits:
 [BlueTree242](https://github.com/BlueTree242) - Pagination
+
 [Asterisk-ops](https://github.com/Ast3risk-ops) - License, README and contributor
 
 More information about this project, docs and more credits coming soon.
