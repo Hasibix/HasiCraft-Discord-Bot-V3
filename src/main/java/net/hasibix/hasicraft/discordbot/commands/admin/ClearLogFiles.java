@@ -6,7 +6,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.hasibix.hasicraft.discordbot.models.client.builders.Command;
 import net.hasibix.hasicraft.discordbot.models.client.builders.HasiBot;
 import net.hasibix.hasicraft.discordbot.models.client.responsebuilders.Response;
-import net.hasibix.hasicraft.discordbot.models.client.utils.Logger;
+import net.hasibix.hasicraft.discordbot.utils.Logger;
 import net.hasibix.hasicraft.discordbot.models.client.responsebuilders.Message;
 
 public class ClearLogFiles {

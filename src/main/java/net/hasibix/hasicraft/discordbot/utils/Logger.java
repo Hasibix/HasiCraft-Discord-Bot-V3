@@ -1,4 +1,4 @@
-package net.hasibix.hasicraft.discordbot.models.client.utils;
+package net.hasibix.hasicraft.discordbot.utils;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -152,7 +152,7 @@ public class Logger {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
         LocalDateTime now = LocalDateTime.now();
         String line = String.format("[%s] [%s] [%s]: %s", Color.CYAN + dtf.format(now) + Color.RESET, getTypeString(true, type) + Color.RESET, this.clazz.getSimpleName(), text);
-        String lineNoColor = String.format("[%s] [%s] [%s]: %s", dtf.format(now), getTypeString(false, type), this.clazz.getSimpleName(), text);
+        String lineNoColor = String.format("[%s] [%s] [%s]: %s", dtf.format(now), getTypeString(false, type), this.clazz.getName(), text);
         System.out.println(line);
 
         if(logsPath != null) {
@@ -166,7 +166,7 @@ public class Logger {
                 );
 
             } catch (IOException e) {
-                String er = String.format("[%s] [%s] [%s]: %s", Color.CYAN + dtf.format(now) + Color.RESET, Color.RED + "ERR" + Color.RESET, Logger.class.getSimpleName(), Color.RESET + "An exception occurred in logger.\n" + ExceptionUtils.getStackTrace(e));
+                String er = String.format("[%s] [%s] [%s]: %s", Color.CYAN + dtf.format(now) + Color.RESET, Color.RED + "ERR" + Color.RESET, Logger.class.getName(), Color.RESET + "An exception occurred in logger.\n" + ExceptionUtils.getStackTrace(e));
                 System.err.println(er);
             }
         }

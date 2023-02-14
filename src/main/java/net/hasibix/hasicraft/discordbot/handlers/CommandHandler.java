@@ -21,13 +21,12 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.hasibix.hasicraft.discordbot.models.client.builders.Command;
 import net.hasibix.hasicraft.discordbot.models.client.responsebuilders.Message;
 import net.hasibix.hasicraft.discordbot.models.client.responsebuilders.Response;
-import net.hasibix.hasicraft.discordbot.models.client.utils.Logger;
-import net.hasibix.hasicraft.discordbot.models.client.utils.Config;
 import net.hasibix.hasicraft.discordbot.utils.ClassFinder;
+import net.hasibix.hasicraft.discordbot.utils.Config;
 import net.hasibix.hasicraft.discordbot.utils.EqualsArray;
+import net.hasibix.hasicraft.discordbot.utils.Logger;
 
 public class CommandHandler extends ListenerAdapter {
-    public Config config;
     private String prefix;
     public String errorEmoji;
     public String successEmoji;
@@ -37,14 +36,13 @@ public class CommandHandler extends ListenerAdapter {
 
     public List<Command> commands;
 
-    public void Initialize(JDA client, String pathToConfig, Config config) {
-        this.config = config;
+    public void Initialize(JDA client, String pathToConfig) {
         this.commands = new ArrayList<Command>();
         this.logger = Logger.of(CommandHandler.class);
-        this.prefix = config.get("prefix", String.class);
-        this.errorEmoji = config.get("emoji", "error", String.class);
-        this.successEmoji = config.get("emoji", "success", String.class);
-        this.warningEmoji = config.get("emoji", "warning", String.class);
+        this.prefix = Config.get("prefix", String.class);
+        this.errorEmoji = Config.get("emoji", "error", String.class);
+        this.successEmoji = Config.get("emoji", "success", String.class);
+        this.warningEmoji = Config.get("emoji", "warning", String.class);
         this.client = client;
 
         String packageName = "net.hasibix.hasicraft.discordbot.commands";

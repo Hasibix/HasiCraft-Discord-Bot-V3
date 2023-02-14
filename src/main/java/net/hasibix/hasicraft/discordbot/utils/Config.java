@@ -1,4 +1,4 @@
-package net.hasibix.hasicraft.discordbot.models.client.utils;
+package net.hasibix.hasicraft.discordbot.utils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -16,17 +16,16 @@ import java.util.stream.Collectors;
 import org.yaml.snakeyaml.Yaml;
 
 public class Config {
-    private Map<String, Object> data;
+    private static Map<String, Object> data;
     
     public Config() {}
 
-    private Yaml yaml = new Yaml();
+    private static final Yaml yaml = new Yaml();
 
-    public void load() {
+    public static void load() {
         try {
             InputStream inputStream = new FileInputStream(new File("config.yml"));
-            Map<String, Object> data = yaml.load(inputStream);
-            this.data = data;
+            data = yaml.load(inputStream);
         } catch (FileNotFoundException e) {
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
             LocalDateTime now = LocalDateTime.now();
@@ -47,7 +46,7 @@ public class Config {
         }
     }
 
-    private String getResourceFileAsString(String fileName) throws IOException {
+    private static String getResourceFileAsString(String fileName) throws IOException {
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
         try (InputStream is = classLoader.getResourceAsStream(fileName)) {
             if (is == null) return null;
@@ -58,22 +57,22 @@ public class Config {
         }
     }
 
-    public Object get(String key) {
-        return this.data.get(key);
+    public static Object get(String key) {
+        return data.get(key);
     }
     
-    public <T> T get(String key, Class<T> type) {
-        return type.cast(this.get(key));
+    public static <T> T get(String key, Class<T> type) {
+        return type.cast(get(key));
     }
     
     @SuppressWarnings("unchecked")
-    public Object get(String key, String position) {
+    public static Object get(String key, String position) {
         Map<String, Object> map = (Map<String, Object>) data.get(key); 
         return map.get(position);
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T get(String key, String position, Class<T> type) {
+    public static <T> T get(String key, String position, Class<T> type) {
         Map<String, Object> map = (Map<String, Object>) data.get(key); 
         return type.cast(map.get(position));
     }

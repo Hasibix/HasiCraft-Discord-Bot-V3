@@ -1,4 +1,4 @@
-package net.hasibix.hasicraft.discordbot.models.client.utils;
+package net.hasibix.hasicraft.discordbot.utils;
 
 import java.security.Key;
 import io.jsonwebtoken.Jwts;

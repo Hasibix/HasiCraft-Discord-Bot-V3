@@ -7,8 +7,8 @@ import java.util.List;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.hasibix.hasicraft.discordbot.models.client.utils.Logger;
 import net.hasibix.hasicraft.discordbot.utils.ClassFinder;
+import net.hasibix.hasicraft.discordbot.utils.Logger;
 
 public class EventHandler {
     

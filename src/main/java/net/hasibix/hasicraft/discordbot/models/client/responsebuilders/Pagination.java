@@ -2,7 +2,9 @@ package net.hasibix.hasicraft.discordbot.models.client.responsebuilders;
 
 import java.security.Key;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
@@ -15,94 +17,142 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Emoji;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.GenericCommandInteractionEvent;
-import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.GenericComponentInteractionCreateEvent;
+import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import net.hasibix.hasicraft.discordbot.models.client.utils.JwtUtils;
-import net.hasibix.hasicraft.discordbot.models.client.utils.Logger;
+import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
+import net.dv8tion.jda.api.interactions.components.selections.SelectOption;
+import net.hasibix.hasicraft.discordbot.models.client.builders.HasiBot;
+import net.hasibix.hasicraft.discordbot.utils.JwtUtils;
+import net.hasibix.hasicraft.discordbot.utils.Logger;
 
 public class Pagination {
-    public class Page {
-        public @Nullable String text;
-        public @Nullable Embed embed;
-
-        public Page(@Nullable String text, @Nullable Embed embed) {
-            if(text == null) {
-                this.text = "";
-            } else {
-                this.text = text;
-            }
-
-            this.embed = embed;
-        }
-    }
-
-    private @Nullable List<Page> pages;
-    
-    private static final Logger LOGGER = Logger.of(Pagination.class);
-    private static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    public static final Key jwtKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     private static final Random random = new Random();
-    
-    private TimeUnit timeoutUnit = TimeUnit.SECONDS;
-    private int timeout = 45;
-
-    private Predicate<ButtonInteractionEvent> predicate;
-    private boolean disableOnTimeout;
-    private EventWaiter waiter;
-    private long channelId;
-    private JDA client;
-
-    private int maxPage;
-    private List<String> tokens;
-    private long messageId = -1;
-    private InteractionHook intMsg;
-    private boolean isInteractionCommand = false;
-    private int page = 0;
-    private Emoji[] emojis = {
-        Emoji.fromMarkdown("⏪"),
-        Emoji.fromMarkdown("◀"),
-        Emoji.fromMarkdown("▶"),
-        Emoji.fromMarkdown("⏩")
-    };
-
-    public Pagination(JDA client) {
-        this.pages = new ArrayList<Page>();
-        this.maxPage = pages.size();
-        this.tokens = new ArrayList<>();
-        this.client = client;
+    private static final Logger logger = Logger.of(Pagination.class);
+    public class Page {
+        @Nullable public String content;
+        @Nullable public Embed embed;
         
-        String[] tokens = new String[] {
-            JwtUtils.createToken(key, Long.toString(channelId) + (short) random.nextInt()),
-            JwtUtils.createToken(key, Long.toString(channelId) + (short) random.nextInt()),
-            JwtUtils.createToken(key, Long.toString(channelId) + (short) random.nextInt()),
-            JwtUtils.createToken(key, Long.toString(channelId) + (short) random.nextInt())
-        };
-
-        for (String i : tokens) {
-            this.tokens.add(i);
+        public Page(@Nullable String content, @Nullable Embed embed) {
+            this.embed = embed;
+            this.content = content != null ? content : "";
         }
     }
+    private class Msg {
+        @Nullable long messageId;
+        @Nullable InteractionHook interactionHook;
+        @Nullable public boolean isInteractionMessage;
 
-    public Pagination setCallback(Predicate<ButtonInteractionEvent> predicate) {
-        this.predicate = predicate;
+        public Msg() {}
+
+        public void setMessage(Object msgOrId) {
+            if(msgOrId instanceof Long) {
+                this.messageId = (long) msgOrId;
+                this.interactionHook = null;
+                this.isInteractionMessage = false;
+            } else if(msgOrId instanceof InteractionHook) {
+                this.messageId = -1;
+                this.interactionHook = (InteractionHook) msgOrId;
+                this.isInteractionMessage = true;
+            } else {
+                this.messageId = -1;
+                this.interactionHook = null;
+                this.isInteractionMessage = false;
+            }
+        }
+
+        public Object getMessage() {
+            return !this.isInteractionMessage ? this.messageId : this.interactionHook;
+        }
+    }
+    public List<Page> pages;
+    private JDA client;
+    private EventWaiter waiter;
+    private boolean useSelectMenu = true;
+    private boolean useButtons = true;
+    private Map<String, String> tokens = new HashMap<String, String>();
+    private int currentPage = 0;
+    private int maxPage = 0;
+    private Map<String, Emoji> emojis = new HashMap<String, Emoji>();
+    private boolean disableOnTimeout = true;
+    private long channelId = -1;
+    private long timeout = 45;
+    private TimeUnit timeoutUnit = TimeUnit.SECONDS;
+    private Msg message;
+    private Predicate<GenericComponentInteractionCreateEvent> condition;
+
+    public Pagination(JDA client, boolean useSelectMenu, boolean useButtons) {
+        this.client = client;
+        this.message = new Msg();
+        this.pages = new ArrayList<Page>();
+
+        if(!useButtons && !useSelectMenu) {
+            logger.error("Cannot use nothing in a pagination! Use atleast one. Buttons or select menu or both to true. Both can't but false!");
+            return;
+        }
+        
+        this.emojis.putIfAbsent("FirstPageButton", Emoji.fromMarkdown(":rewind:"));
+        this.emojis.putIfAbsent("PreviousPageButton", Emoji.fromMarkdown(":arrow_backward:"));
+        this.emojis.putIfAbsent("CancelButton", Emoji.fromMarkdown(":x:"));
+        this.emojis.putIfAbsent("NextPageButton", Emoji.fromMarkdown(":arrow_forward:"));
+        this.emojis.putIfAbsent("LastPageButton", Emoji.fromMarkdown(":fast_forward:"));
+
+        this.useSelectMenu = useSelectMenu;
+        this.useButtons = useButtons;
+
+        if(useSelectMenu) {
+            this.tokens.putIfAbsent("SelectPageMenu", JwtUtils.createToken(jwtKey, Long.toString(client.getSelfUser().getIdLong()) + (short) random.nextInt()));
+        }
+        
+        if(useButtons) {
+            this.tokens.putIfAbsent("FirstPageButton", JwtUtils.createToken(jwtKey, Long.toString(client.getSelfUser().getIdLong()) + (short) random.nextInt()));
+            this.tokens.putIfAbsent("PreviousPageButton",JwtUtils.createToken(jwtKey, Long.toString(client.getSelfUser().getIdLong()) + (short) random.nextInt()));
+            this.tokens.putIfAbsent("CancelButton",JwtUtils.createToken(jwtKey, Long.toString(client.getSelfUser().getIdLong()) + (short) random.nextInt()));
+            this.tokens.putIfAbsent("NextPageButton", JwtUtils.createToken(jwtKey, Long.toString(client.getSelfUser().getIdLong()) + (short) random.nextInt()));
+            this.tokens.putIfAbsent("LastPageButton", JwtUtils.createToken(jwtKey, Long.toString(client.getSelfUser().getIdLong()) + (short) random.nextInt()));
+        }
+        HasiBot.paginationHandler.add(this);
+    }
+
+    public Pagination addPage(Page page) {
+        if(page != null) {
+            this.pages.add(page);
+            this.maxPage++;
+        }
         return this;
     }
 
-    public Pagination setEmojis(Emoji... emojis) {
-        this.emojis = emojis;
+    public Pagination useSelectMenu(boolean bool) {
+        this.useSelectMenu = bool;
+        return this;
+    }
+
+    public Pagination useButtons(boolean bool) {
+        this.useButtons = bool;
+        return this;
+    }
+
+    public Pagination setChannel(long channelId) {
+        this.channelId = channelId;
+        return this;
+    }
+
+    public Pagination setWaiter(EventWaiter waiter) {
+        this.waiter = waiter;
+        return this;
+    }
+
+    public Pagination setCondition(Predicate<GenericComponentInteractionCreateEvent> condition) {
+        this.condition = condition;
         return this;
     }
 
     public Pagination setDeleteOnTimeout(boolean behavior) {
         this.disableOnTimeout = behavior;
         return this;
-    }
-
-    public void addPage(@Nullable Page page) {
-        if(page != null) {
-            this.pages.add(page);
-        }
     }
 
     public Pagination setTimeout(int timeout) {
@@ -115,170 +165,278 @@ public class Pagination {
         return this;
     }
 
-    public Pagination setWaiter(EventWaiter waiter) {
-        this.waiter = waiter;
+    public Pagination setEmoji(String emojiType, Emoji emoji) {
+        this.emojis.remove(emojiType);
+        this.emojis.put(emojiType, emoji);
         return this;
     }
 
     public void Reply(@Nonnull net.dv8tion.jda.api.entities.Message message, boolean mention) {
-        Message response = new Message(pages.get(0).text != null ? pages.get(0).text : "");
+        Message response = new Message(pages.get(0).content != null ? pages.get(0).content : "");
         response.addEmbed(pages.get(0).embed);
-        response.addActionRow(getActionRow());
+        if(this.useSelectMenu) {
+            response.addActionRow(getActionRowSelectMenu(false));
+        }
+        if(this.useButtons) {
+            response.addActionRow(getActionRowButtons());
+        }
         Response.Reply(response, message, mention, (m) -> {
-            this.messageId = m.getIdLong();
-            this.intMsg = null;
-            this.isInteractionCommand = false;
+            this.message.setMessage((Long) m.getIdLong());
         });
-        doWait();
+        startWaiter();
     }
 
     public void CommandReply(@Nonnull GenericCommandInteractionEvent event) {
-        Message response = new Message(pages.get(0).text != null ? pages.get(0).text : "");
+        Message response = new Message(pages.get(0).content != null ? pages.get(0).content : "");
         response.addEmbed(pages.get(0).embed);
-        response.addActionRow(getActionRow());
+        if(this.useSelectMenu) {
+            response.addActionRow(getActionRowSelectMenu(false));
+        }
+        if(this.useButtons) {
+            response.addActionRow(getActionRowButtons());
+        }
         Response.CommandReply(response, event, false, (m) -> {
-            this.messageId = -1;
-            this.intMsg = m;
-            this.isInteractionCommand = true;
+            this.message.setMessage((InteractionHook) m);
         });
+        startWaiter();
     }
 
     public void Send(@Nonnull MessageChannel channel) {
-        Message response = new Message(pages.get(0).text != null ? pages.get(0).text : "");
+        Message response = new Message(pages.get(0).content != null ? pages.get(0).content : "");
         response.addEmbed(pages.get(0).embed);
-        response.addActionRow(getActionRow());
+        if(this.useSelectMenu) {
+            response.addActionRow(getActionRowSelectMenu(false));
+        }
+        if(this.useButtons) {
+            response.addActionRow(getActionRowButtons());
+        }
         Response.Send(response, channel, (m) -> {
-            this.messageId = m.getIdLong();
-            this.intMsg = null;
-            this.isInteractionCommand = false;
+            this.message.setMessage((Long) m.getIdLong());
         });
-        doWait();
+        startWaiter();
     }
 
-    public ActionRow getActionRow() {
+    public ActionRow getActionRowButtons() {
         return ActionRow.of(
-                page == 0 ? Button.primary(tokens.get(0), emojis[0]).asDisabled() : Button.primary(tokens.get(0), emojis[0]).asEnabled(),
-                page == 0 ? Button.primary(tokens.get(1), emojis[1]).asDisabled() : Button.primary(tokens.get(1), emojis[1]).asEnabled(),
-                page == maxPage | maxPage == 1 ? Button.primary(tokens.get(2), emojis[2]).asDisabled() : Button.primary(tokens.get(2), emojis[2]).asEnabled(),
-                page == maxPage | maxPage == 1 ? Button.primary(tokens.get(3), emojis[3]).asDisabled() : Button.primary(tokens.get(3), emojis[3]).asEnabled()
+            this.currentPage == 0 ? Button.primary(tokens.get("FirstPageButton"), emojis.get("FirstPageButton")).asDisabled() : Button.primary(tokens.get("FirstPageButton"), emojis.get("FirstPageButton")).asEnabled(),
+            this.currentPage == 0  ? Button.primary(tokens.get("PreviousPageButton"), emojis.get("PreviousPageButton")).asDisabled() : Button.primary(tokens.get("PreviousPageButton"), emojis.get("PreviousPageButton")).asEnabled(),
+            Button.danger(tokens.get("CancelButton"), emojis.get("CancelButton")),
+            this.currentPage == (this.maxPage - 1) ? Button.primary(tokens.get("NextPageButton"), emojis.get("NextPageButton")).asDisabled() : Button.primary(tokens.get("NextPageButton"), emojis.get("NextPageButton")).asEnabled(),
+            this.currentPage == (this.maxPage - 1)  ? Button.primary(tokens.get("LastPageButton"), emojis.get("LastPageButton")).asDisabled() : Button.primary(tokens.get("LastPageButton"), emojis.get("LastPageButton")).asEnabled()
         );
     }
 
-    private void doWait() {
-        waiter.waitForEvent(ButtonInteractionEvent.class, predicate, this::switchPage, timeout, timeoutUnit, () -> {
+    public ActionRow getActionRowSelectMenu(boolean disabled) {
+        SelectMenu.Builder smB  = SelectMenu.create(tokens.get("SelectPageMenu")).setPlaceholder("Select a page")
+        .setMinValues(1)
+        .setMaxValues(1);
+
+        for (int i = 0; i < pages.size(); i++) {
+            smB = smB.addOption(String.format("Page %s", (i + 1)), String.format("page_%s", i));
+        }
+        
+        return ActionRow.of(
+            smB.setDisabled(disabled).build()
+        );
+    }
+
+    public void startWaiter() {
+        waiter.waitForEvent(GenericComponentInteractionCreateEvent.class, condition, this::switchPage, this.timeout, this.timeoutUnit, () -> {
             if (this.disableOnTimeout) {
-                if(!this.isInteractionCommand) {
-                    if (this.messageId == -1) {
-                        LOGGER.error("The message is not set. Please send the pagination first!");
-                        LOGGER.trace(new IllegalArgumentException());
-                        return;
-                    }
-
-                    MessageChannel channel = client.getTextChannelById(channelId) != null ? client.getTextChannelById(channelId) : client.getPrivateChannelById(channelId);
-                    if(channel == null) {
-                        LOGGER.error("Channel does not exist for ID " + this.channelId);
-                        LOGGER.trace(new IllegalStateException());
-                        return;
-                    }
-                    channel.retrieveMessageById(this.messageId).queue(m -> {
-                        m.editMessageComponents(ActionRow.of(
-                            Button.primary(tokens.get(0), emojis[0]).asDisabled(),
-                            Button.primary(tokens.get(1), emojis[1]).asDisabled(),
-                            Button.primary(tokens.get(2), emojis[2]).asDisabled(),
-                            Button.primary(tokens.get(3), emojis[3]).asDisabled()
-                        ));
-                    });
-
-                } else if(this.isInteractionCommand) {
-                    if (this.intMsg == null) {
-                        LOGGER.error("The message is not set. Please send the pagination first!");
-                        LOGGER.trace(new IllegalArgumentException());
-                        return;
-                    }
-
-                    intMsg.editOriginalComponents(ActionRow.of(
-                        Button.primary(tokens.get(0), emojis[0]).asDisabled(),
-                        Button.primary(tokens.get(1), emojis[1]).asDisabled(),
-                        Button.primary(tokens.get(2), emojis[2]).asDisabled(),
-                        Button.primary(tokens.get(3), emojis[3]).asDisabled()
-                    )).queue();
-                }
+                cancelPagination();
             }
         });
     }
 
-    private void switchPage(ButtonInteractionEvent event) {
+    private void cancelPagination() {
+        if(!this.message.isInteractionMessage) {
+            if ((long) this.message.getMessage() == -1) {
+                logger.error("The message is not set. Please send the pagination first!");
+                logger.trace(new IllegalArgumentException());
+                return;
+            }
+
+            MessageChannel channel = client.getTextChannelById(this.channelId) != null ? client.getTextChannelById(this.channelId) : client.getPrivateChannelById(this.channelId);
+            if(channel == null) {
+                logger.error("Channel does not exist for ID " + this.channelId);
+                logger.trace(new IllegalStateException());
+                return;
+            }
+            
+            if(this.useButtons && this.useSelectMenu) {
+                channel.retrieveMessageById((long) this.message.getMessage()).queue(m -> {
+                    m.editMessageComponents(
+                    getActionRowSelectMenu(true),    
+                    ActionRow.of(
+                            Button.primary(tokens.get("FirstPageButton"), emojis.get("FirstPageButton")).asDisabled(),
+                            Button.primary(tokens.get("PreviousPageButton"), emojis.get("PreviousPageButton")).asDisabled(),
+                            Button.danger(tokens.get("CancelButton"), emojis.get("CancelButton")).asDisabled(),
+                            Button.primary(tokens.get("NextPageButton"), emojis.get("NextPageButton")).asDisabled(),
+                            Button.primary(tokens.get("LastPageButton"), emojis.get("LastPageButton")).asDisabled()
+                        )
+                    ).queue();
+                });
+            } else if(this.useButtons && !this.useSelectMenu) {
+                channel.retrieveMessageById((long) this.message.getMessage()).queue(m -> {
+                    m.editMessageComponents(
+                    ActionRow.of(
+                            Button.primary(tokens.get("FirstPageButton"), emojis.get("FirstPageButton")).asDisabled(),
+                            Button.primary(tokens.get("PreviousPageButton"), emojis.get("PreviousPageButton")).asDisabled(),
+                            Button.danger(tokens.get("CancelButton"), emojis.get("CancelButton")).asDisabled(),
+                            Button.primary(tokens.get("NextPageButton"), emojis.get("NextPageButton")).asDisabled(),
+                            Button.primary(tokens.get("LastPageButton"), emojis.get("LastPageButton")).asDisabled()
+                        )
+                    ).queue();
+                });
+            } else if(!this.useButtons && this.useSelectMenu) {
+                channel.retrieveMessageById((long) this.message.getMessage()).queue(m -> {
+                    m.editMessageComponents(
+                        getActionRowSelectMenu(true)
+                    ).queue();
+                });
+            }
+
+        } else if(this.message.isInteractionMessage) {
+            if ((long) this.message.getMessage() == -1) {
+                logger.error("The message is not set. Please send the pagination first!");
+                logger.trace(new IllegalArgumentException());
+                return;
+            }
+
+            MessageChannel channel = client.getTextChannelById(this.channelId) != null ? client.getTextChannelById(this.channelId) : client.getPrivateChannelById(this.channelId);
+            if(channel == null) {
+                logger.error("Channel does not exist for ID " + this.channelId);
+                logger.trace(new IllegalStateException());
+                return;
+            }
+            
+            if(this.useButtons && this.useSelectMenu) {
+                InteractionHook.class.cast(this.message.getMessage()).editOriginalComponents(
+                    getActionRowSelectMenu(true),    
+                    ActionRow.of(
+                        Button.primary(tokens.get("FirstPageButton"), emojis.get("FirstPageButton")).asDisabled(),
+                        Button.primary(tokens.get("PreviousPageButton"), emojis.get("PreviousPageButton")).asDisabled(),
+                        Button.danger(tokens.get("CancelButton"), emojis.get("CancelButton")).asDisabled(),
+                        Button.primary(tokens.get("NextPageButton"), emojis.get("NextPageButton")).asDisabled(),
+                        Button.primary(tokens.get("LastPageButton"), emojis.get("LastPageButton")).asDisabled()
+                    )
+                ).queue();
+            } else if(this.useButtons && !this.useSelectMenu) {
+                InteractionHook.class.cast(this.message.getMessage()).editOriginalComponents(
+                    ActionRow.of(
+                            Button.primary(tokens.get("FirstPageButton"), emojis.get("FirstPageButton")).asDisabled(),
+                            Button.primary(tokens.get("PreviousPageButton"), emojis.get("PreviousPageButton")).asDisabled(),
+                            Button.danger(tokens.get("CancelButton"), emojis.get("CancelButton")).asDisabled(),
+                            Button.primary(tokens.get("NextPageButton"), emojis.get("NextPageButton")).asDisabled(),
+                            Button.primary(tokens.get("LastPageButton"), emojis.get("LastPageButton")).asDisabled()
+                        )
+                ).queue();
+            } else if(!this.useButtons && this.useSelectMenu) {
+                InteractionHook.class.cast(this.message.getMessage()).editOriginalComponents(
+                    getActionRowSelectMenu(true)
+                ).queue();
+            }
+        }
+    }
+
+    private void switchPage(GenericComponentInteractionCreateEvent event) {
         event.deferEdit().queue();
         String jwt = event.getComponentId();
-        String emoji = event.getButton().getId();
-        
-        if(!this.isInteractionCommand) {
+        if(!this.message.isInteractionMessage) {
             net.dv8tion.jda.api.entities.Message message = event.getMessage();
 
-            if (!tokens.contains(jwt)) {
+            if (!tokens.containsValue(jwt)) {
                 MessageChannel channel = client.getTextChannelById(channelId) != null ? client.getTextChannelById(channelId) : client.getPrivateChannelById(channelId);
                 if (channel != null) {
-                    channel.deleteMessageById(messageId).queue();
+                    channel.deleteMessageById((long) this.message.getMessage()).queue();
                 }
                 return;
             }
 
-            if (!predicate.test(event)) {
+            if (!condition.test(event)) {
                 return;
             }
 
-            if (emoji.equals(tokens.get(0))) {
-                page = 0;
-                if (page < 0) {
-                    page = maxPage - 1;
+            if (jwt.equals(tokens.get("FirstPageButton"))) {
+                currentPage = 0;
+                if (currentPage < 0) {
+                    currentPage = 0;
                 }
-            } else if (emoji.equals(tokens.get(1))) {
-                page--;
-                if (page < 0) {
-                    page = maxPage - 1;
+            } else if (jwt.equals(tokens.get("PreviousPageButton"))) {
+                currentPage--;
+                if (currentPage < 0) {
+                    currentPage = 0;
                 }
-            } else if (emoji.equals(tokens.get(2))) {
-                page++;
-                if (page >= maxPage) {
-                    page = 0;
+            } else if (jwt.equals(tokens.get("NextPageButton"))) {
+                currentPage++;
+                if (currentPage > (maxPage - 1)) {
+                    currentPage = (maxPage - 1);
                 }
-            } else if (emoji.equals(tokens.get(3))) {
-                page = maxPage;
+            } else if (jwt.equals(tokens.get("LastPageButton"))) {
+                currentPage = (maxPage - 1);
+            } else if (jwt.equals(tokens.get("CancelButton"))) {
+                cancelPagination();
+                return;
+            } else if (jwt.equals(tokens.get("SelectPageMenu"))) {
+                List<SelectOption> selections = SelectMenuInteractionEvent.class.cast(event).getSelectedOptions();
+                currentPage = Integer.valueOf(selections.get(0).getValue().split("_")[1]);
             }
 
-            Response.EditMsg(new Message(pages.get(page).text != null ? pages.get(page).text : "").addEmbed(pages.get(page).embed), message);
-            doWait();
-        } else if (this.isInteractionCommand) {
-            if (!tokens.contains(jwt)) {
-                intMsg.deleteOriginal();
+            Message msg = new Message(pages.get(currentPage).content != null ? pages.get(currentPage).content : "").addEmbed(pages.get(currentPage).embed);
+
+            if(this.useSelectMenu) {
+                msg.addActionRow(getActionRowSelectMenu(false));
+            }
+
+            if(this.useButtons) {
+                msg.addActionRow(getActionRowButtons());
+            }
+
+            Response.EditMsg(msg, message);
+            startWaiter();
+        } else if (this.message.isInteractionMessage) {
+            if (!tokens.containsValue(jwt)) {
+                InteractionHook.class.cast(message.getMessage()).deleteOriginal();
                 return;
             }
 
-            if (!predicate.test(event)) {
+            if (!condition.test(event)) {
                 return;
             }
+            
+            if (jwt.equals(tokens.get("FirstPageButton"))) {
+                currentPage = 0;
+            } else if (jwt.equals(tokens.get("PreviousPageButton"))) {
+                currentPage--;
+                if (currentPage < 0) {
+                    currentPage = 0;
+                }
+            } else if (jwt.equals(tokens.get("NextPageButton"))) {
+                currentPage++;
+                if (currentPage > (maxPage - 1)) {
+                    currentPage = (maxPage - 1);
+                }
+            } else if (jwt.equals(tokens.get("LastPageButton"))) {
+                currentPage = (maxPage - 1);
+            } else if (jwt.equals(tokens.get("CancelButton"))) {
+                cancelPagination();
+                return;
+            } else if (jwt.equals(tokens.get("SelectPageMenu"))) {
+                List<SelectOption> selections = SelectMenuInteractionEvent.class.cast(event).getSelectedOptions();
+                currentPage = Integer.valueOf(selections.get(0).getValue().split("_")[1]);
+            }
+            Message msg = new Message(pages.get(currentPage).content != null ? pages.get(currentPage).content : "").addEmbed(pages.get(currentPage).embed);
 
-            if (emoji.equals(tokens.get(0))) {
-                page = 0;
-                if (page < 0) {
-                    page = maxPage - 1;
-                }
-            } else if (emoji.equals(tokens.get(1))) {
-                page--;
-                if (page < 0) {
-                    page = maxPage - 1;
-                }
-            } else if (emoji.equals(tokens.get(2))) {
-                page++;
-                if (page >= maxPage) {
-                    page = 0;
-                }
-            } else if (emoji.equals(tokens.get(3))) {
-                page = maxPage;
+            if(this.useSelectMenu) {
+                msg.addActionRow(getActionRowSelectMenu(false));
             }
 
-            Response.EditCommandReply(new Message(pages.get(page).text != null ? pages.get(page).text : "").addEmbed(pages.get(page).embed), intMsg);
-            doWait();
+            if(this.useButtons) {
+                msg.addActionRow(getActionRowButtons());
+            }
+
+            Response.EditCommandReply(msg, (InteractionHook) this.message.getMessage());
+            startWaiter();
         }
     }
 }

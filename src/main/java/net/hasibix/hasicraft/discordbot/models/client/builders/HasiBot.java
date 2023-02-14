@@ -12,10 +12,8 @@ import net.dv8tion.jda.api.entities.SelfUser;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.hasibix.hasicraft.discordbot.handlers.CommandHandler;
 import net.hasibix.hasicraft.discordbot.handlers.EventHandler;
-import net.hasibix.hasicraft.discordbot.handlers.InteractionHandler;
 import net.hasibix.hasicraft.discordbot.handlers.PaginationHandler;
-import net.hasibix.hasicraft.discordbot.models.client.utils.Config;
-import net.hasibix.hasicraft.discordbot.models.client.utils.Logger;
+import net.hasibix.hasicraft.discordbot.utils.Logger;
 
 public class HasiBot {
 
@@ -44,11 +42,9 @@ public class HasiBot {
     }
 
     private JDA bot;
-    public Config config;
     private Logger logger;
     public static CommandHandler commandHandler;
     public static EventHandler eventHandler;
-    public static InteractionHandler interactionHandler;
     public static PaginationHandler paginationHandler;
 
     static Collection<GatewayIntent> mapIntentsToGatewayIntents(@Nullable Intent[] intents) {
@@ -128,9 +124,8 @@ public class HasiBot {
 
     Collection<GatewayIntent> gatewayIntents;
 
-    public HasiBot(@Nullable Intent[] intents, Config config) {
+    public HasiBot(@Nullable Intent[] intents) {
         logger = Logger.of(HasiBot.class);
-        this.config = config;
         this.gatewayIntents = mapIntentsToGatewayIntents(intents);
     }
 
@@ -141,26 +136,25 @@ public class HasiBot {
         }
 
         commandHandler = new CommandHandler();
-        interactionHandler = new InteractionHandler();
         eventHandler = new EventHandler();
-        paginationHandler = new PaginationHandler();
 
         try {
             JDABuilder builder = JDABuilder.createDefault(token);
             builder.setEnabledIntents(gatewayIntents);
             this.bot = builder.build();
 
-            commandHandler.Initialize(this.bot, "config.yml", this.config);
+            commandHandler.Initialize(this.bot, "Config.yml");
             eventHandler.Initialize();
 
             bot.addEventListener(commandHandler);
-            bot.addEventListener(interactionHandler);
             eventHandler.registerEvents(bot);
 
             SelfUser botUser = this.bot.getSelfUser();
             String botTag = botUser.getAsTag();
 
             logger.info("Logged in as " + botTag);
+            paginationHandler = new PaginationHandler(this.bot);
+
         } catch (LoginException e) {
             logger.fatal("LoginException occured!");
             logger.trace(e);

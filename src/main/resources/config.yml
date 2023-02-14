@@ -4,6 +4,11 @@ emoji: # If not set, will use default discord emojis.
     success: ":white_check_mark"
     error: ":x:"
     warning: ":warning:"
+    pagination_first_page: ":rewind:"
+    pagination_previous_page: ":arrow_backward:"
+    pagination_cancel: ":x:"
+    pagination_next_page: ":arrow_forward:"
+    pagination_last_page: ":fast_forward:"
 client_id: "000000000000000000"
 
 # This field is used ONLY if you have music preset enabled.
@@ -22,6 +27,7 @@ presets:
     reactionroles: true
     utility: true
     captcha: true
+    ticket: true
 
 # This field depends on whethere this bot is being used for a specific* minecraft discord server or not. If not then set this to null.
 minecraft_server: # Put null here and also remove the next 2 lines below it if you don't need this.

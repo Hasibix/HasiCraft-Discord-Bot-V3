@@ -5,7 +5,8 @@ import com.mongodb.MongoClientSettings;
 import com.mongodb.WriteConcern;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
-import net.hasibix.hasicraft.discordbot.models.client.utils.Logger;
+
+import net.hasibix.hasicraft.discordbot.utils.Logger;
 
 public class MongoDBClient {
     MongoClient mongoClient;

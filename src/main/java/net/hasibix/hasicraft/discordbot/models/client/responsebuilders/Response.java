@@ -53,14 +53,14 @@ public class Response {
     }
 
     public static void CommandReply(Message message, GenericCommandInteractionEvent event, boolean ephemeral) {
-        net.dv8tion.jda.api.entities.Message response = message.build();
+        net.dv8tion.jda.api.entities.Message response = message.buildAR();
         ReplyCallbackAction action = event.reply(response).setEphemeral(ephemeral);
 
         action.queue();
     }
     
     public static void EditCommandReply(Message newMessage, InteractionHook message) {
-        net.dv8tion.jda.api.entities.Message response = newMessage.build();
+        net.dv8tion.jda.api.entities.Message response = newMessage.buildAR();
         WebhookMessageUpdateAction<net.dv8tion.jda.api.entities.Message> action = message.editOriginal(response);
 
         action.queue();
