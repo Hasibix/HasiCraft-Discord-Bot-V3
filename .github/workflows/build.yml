@@ -19,10 +19,10 @@ jobs:
         java-version: '17'
 
     - name: Build with Maven
-      run: mvn package -Dmaven.build.dest=builds
+      run: mvn package
 
     - name: Publish JAR
       uses: actions/upload-artifact@v2
       with:
         name: HasiCraft-Discord-Bot-V3
-        path: ./builds/HasiCraft-Discord-Bot-V3.jar
+        path: ./target/hasicraft-discord-bot-SNAPSHOT-V3.0.jar
