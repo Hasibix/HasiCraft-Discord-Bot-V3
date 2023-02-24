@@ -1,4 +1,6 @@
-# HasiCraft Discord Bot V3.0
+# HasiCraft Discord Bot V3.0 
+
+[![Build and Publish JAR](https://github.com/Hasibix/HasiCraft-Discord-Bot-V3/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/Hasibix/HasiCraft-Discord-Bot-V3/actions/workflows/build.yml)
 
 This repo contains the source code for [HasiCraft](https://discord.gg/RX5azB3NwP)'s Discord Bot version 3.0.
 
