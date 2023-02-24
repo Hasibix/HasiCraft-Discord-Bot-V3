@@ -1,6 +1,9 @@
 name: Build and Publish JAR
 
-on: {}
+on: 
+  push:
+   branches:
+    master
 
 jobs:
   build:
