@@ -1,6 +1,6 @@
 name: Build and Publish JAR
 
-on: []
+on: {}
 
 jobs:
   build:
@@ -8,10 +8,10 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3.3.0
 
     - name: Setup JDK
-      uses: actions/setup-java@v1
+      uses: actions/setup-java@v3.10.0
       with:
         java-version: '17'
 
@@ -19,7 +19,7 @@ jobs:
       run: mvn package
 
     - name: Publish JAR
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3.1.2
       with:
         name: HasiCraft-Discord-Bot-V3
         path: ./target/hasicraft-discord-bot-SNAPSHOT-V3.0.jar
