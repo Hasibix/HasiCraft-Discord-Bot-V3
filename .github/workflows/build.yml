@@ -1,9 +1,6 @@
 name: Build and Publish JAR
 
-on: 
-  push:
-   branches:
-    master
+on: workflow_dispatch
 
 jobs:
   build:
@@ -17,6 +14,7 @@ jobs:
       uses: actions/setup-java@v3.10.0
       with:
         java-version: '17'
+        distribution: oracle
 
     - name: Build with Maven
       run: mvn package
