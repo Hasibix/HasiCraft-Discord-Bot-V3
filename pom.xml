@@ -6,7 +6,7 @@
 
     <groupId>net.hasibix.hasicraft.discordbot</groupId>
     <artifactId>hasicraft-discord-bot</artifactId>
-    <version>SNAPSHOT-V3.0</version>
+    <version>v3.0-s.2</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
