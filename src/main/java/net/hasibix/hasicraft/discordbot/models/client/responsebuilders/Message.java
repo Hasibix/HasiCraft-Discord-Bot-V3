@@ -42,19 +42,6 @@ public class Message {
         return response;
     }
 
-    public net.dv8tion.jda.api.entities.Message buildAR() {
-        List<MessageEmbed> embedList = new ArrayList<MessageEmbed>();
-        for (Embed embed : this.embeds) {
-            embedList.add(embed.build());
-        }
-        MessageBuilder response = new MessageBuilder()
-            .append(this.content != null ? this.content : "")
-            .setEmbeds(embedList);
-        
-        return this.actionRows.size() > 0 ? response.setActionRows(this.actionRows).build() : response.build();
-        
-    }
-
     public Message addActionRow(ActionRow actionRow) {
         actionRows.add(actionRow);
         return this;

@@ -21,17 +21,17 @@ public class Command {
     @Nonnull public final String description;
     @Nonnull public final Permission[] permissions;
     @Nonnull public final String category;
-    @Nonnull public final OptionData[] args;
+    @Nonnull public final OptionData[] argsSlash;
     @Nonnull public final CommondFunc<JDA, MessageReceivedEvent, Object[], Logger> run;
     @Nonnull public final CommondFunc<JDA, SlashCommandInteractionEvent, OptionMapping[], Logger> slashrun;
 
-    public Command(@Nonnull String name, @Nonnull String[] aliases, @Nonnull String description, @Nonnull Permission[] permissions, @Nonnull String category, @Nonnull OptionData[] args, @Nonnull CommondFunc<JDA, MessageReceivedEvent, Object[], Logger> run, @Nonnull CommondFunc<JDA, SlashCommandInteractionEvent, OptionMapping[], Logger> slashrun) {
+    public Command(@Nonnull String name, @Nonnull String[] aliases, @Nonnull String description, @Nonnull Permission[] permissions, @Nonnull String category, @Nonnull OptionData[] argsSlash, @Nonnull CommondFunc<JDA, MessageReceivedEvent, Object[], Logger> run, @Nonnull CommondFunc<JDA, SlashCommandInteractionEvent, OptionMapping[], Logger> slashrun) {
         this.name = name;
         this.aliases = aliases;
         this.description = description;
         this.permissions = permissions;
         this.category = category;
-        this.args = args;
+        this.argsSlash = argsSlash;
         this.run = run;
         this.slashrun = slashrun;
     }

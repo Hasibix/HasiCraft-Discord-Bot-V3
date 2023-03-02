@@ -53,15 +53,34 @@ public class Response {
     }
 
     public static void CommandReply(Message message, GenericCommandInteractionEvent event, boolean ephemeral) {
-        net.dv8tion.jda.api.entities.Message response = message.buildAR();
-        ReplyCallbackAction action = event.reply(response).setEphemeral(ephemeral);
+        net.dv8tion.jda.api.entities.Message response = message.build();
+        ReplyCallbackAction action = event.reply(response);
+        
+        if(message.actionRows.size() > 0) {
+            action.addActionRows(message.actionRows);
+        }
+
+        action.setEphemeral(ephemeral).queue();
+    }
+
+    public static void CommandReply(Message message, GenericCommandInteractionEvent event) {
+        net.dv8tion.jda.api.entities.Message response = message.build();
+        ReplyCallbackAction action = event.reply(response);
+        
+        if(message.actionRows.size() > 0) {
+            action.addActionRows(message.actionRows);
+        }
 
         action.queue();
     }
     
     public static void EditCommandReply(Message newMessage, InteractionHook message) {
-        net.dv8tion.jda.api.entities.Message response = newMessage.buildAR();
+        net.dv8tion.jda.api.entities.Message response = newMessage.build();
         WebhookMessageUpdateAction<net.dv8tion.jda.api.entities.Message> action = message.editOriginal(response);
+
+        if(newMessage.actionRows.size() > 0) {
+            action.setActionRows(newMessage.actionRows);
+        }
 
         action.queue();
     }
@@ -107,6 +126,17 @@ public class Response {
     public static void CommandReply(Message message, GenericCommandInteractionEvent event, boolean ephemeral, @Nullable Consumer<? super InteractionHook> success) {
         net.dv8tion.jda.api.entities.Message response = message.build();
         ReplyCallbackAction action = event.reply(response).setEphemeral(ephemeral);
+
+        action.queue(success);
+    }
+
+    public static void CommandReply(Message message, GenericCommandInteractionEvent event, @Nullable Consumer<? super InteractionHook> success) {
+        net.dv8tion.jda.api.entities.Message response = message.build();
+        ReplyCallbackAction action = event.reply(response);
+        
+        if(message.actionRows.size() > 0) {
+            action.addActionRows(message.actionRows);
+        }
 
         action.queue(success);
     }

@@ -195,7 +195,7 @@ public class Pagination {
         if(this.useButtons) {
             response.addActionRow(getActionRowButtons());
         }
-        Response.CommandReply(response, event, false, (m) -> {
+        Response.CommandReply(response, event, (m) -> {
             this.message.setMessage((InteractionHook) m);
         });
         startWaiter();
@@ -297,7 +297,7 @@ public class Pagination {
             }
 
         } else if(this.message.isInteractionMessage) {
-            if ((long) this.message.getMessage() == -1) {
+            if (InteractionHook.class.cast(this.message.getMessage()) == null) {
                 logger.error("The message is not set. Please send the pagination first!");
                 logger.trace(new IllegalArgumentException());
                 return;

@@ -176,8 +176,9 @@ public class CommandHandler extends ListenerAdapter {
     public void onGuildReady(@Nonnull GuildReadyEvent event) {
         List<CommandData> commandData = new ArrayList<>();
         for (Command i : commands) {
-            if (i.args.length > 0) {
-                ArrayList<OptionData> optionList = new ArrayList<OptionData>(Arrays.asList(i.args));
+            if (i.argsSlash.length > 0) {
+                ArrayList<OptionData> optionList = new ArrayList<OptionData>(Arrays.asList(i.argsSlash));
+                
                 commandData.add(Commands.slash(i.name, i.description).addOptions(optionList));
             } else {
                 commandData.add(Commands.slash(i.name, i.description));

@@ -1,6 +1,5 @@
 package net.hasibix.hasicraft.discordbot.commands.info;
 
-import java.awt.Color;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import net.dv8tion.jda.api.Permission;
@@ -11,6 +10,7 @@ import net.hasibix.hasicraft.discordbot.models.client.builders.HasiBot;
 import net.hasibix.hasicraft.discordbot.models.client.responsebuilders.Embed;
 import net.hasibix.hasicraft.discordbot.models.client.responsebuilders.Message;
 import net.hasibix.hasicraft.discordbot.models.client.responsebuilders.Response;
+import java.awt.Color;
 
 public class Ping {
     public static void register() {
@@ -31,7 +31,7 @@ public class Ping {
                 int mb = 1024 * 1024;
 
                 Embed embed = new Embed()
-                .setColor(Color.BLACK)
+                .setColor(Color.black)
                 .setTitle("Pong!", null)
 
                 .addField(":ping_pong: Ping", String.format("%s ms",client.getGatewayPing()), true)
@@ -63,7 +63,7 @@ public class Ping {
                 int mb = 1024 * 1024;
 
                 Embed embed = new Embed()
-                .setColor(Color.BLACK)
+                .setColor(Color.black)
                 .setTitle("Pong!", null)
 
                 .addField(":ping_pong: Ping", String.format("%s ms",client.getGatewayPing()), true)
