@@ -1,10 +1,13 @@
-# HasiCraft Discord Bot V3.0
+# HasiCraft Discord Bot V3.0 
+
+
+[![Build and Publish JAR](https://github.com/Hasibix/HasiCraft-Discord-Bot-V3/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/Hasibix/HasiCraft-Discord-Bot-V3/actions/workflows/build.yml)
 
 This repo contains the source code for [HasiCraft](https://discord.gg/RX5azB3NwP)'s Discord Bot version 3.0.
 
 This version of the bot is written in Java using the **J**ava **D**iscord **A**PI (JDA). Previously, it was written in Javascript using NodeJS and Discord.js. 
 
-This project is **COMPLETELY** free to use. Anyone can make use of this project for any kind of open source use, so long as said use is also under the AGPL license. For more info, consult [LICENSE.md](https://github.com/Hasibix/HasiCraft-Discord-Bot-V3/blob/master/LICENSE.md)
+This project is **COMPLETELY** free to use. Anyone can make use of this project for any kind of open source use, so long as said use is also under the AGPLv3 license. For more info, consult [LICENSE.md](https://github.com/Hasibix/HasiCraft-Discord-Bot-V3/blob/master/LICENSE.md)
 
 Credits:
 
@@ -23,7 +26,7 @@ Copyright © 2023 Hasibix Hasib. All Rights Reserved.
 This program is free software: you can redistribute
 it and/or modify it under the terms of the GNU Affero
 General Public License as published by the Free Software Foundation,
-either version 3 of the License, or (at your option) any later version.
+either version 3 of the License, or any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY

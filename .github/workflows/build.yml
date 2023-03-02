@@ -1,0 +1,26 @@
+name: Build and Publish JAR
+
+on: workflow_dispatch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3.3.0
+
+    - name: Setup JDK
+      uses: actions/setup-java@v3.10.0
+      with:
+        java-version: '17'
+        distribution: oracle
+
+    - name: Build with Maven
+      run: mvn package
+
+    - name: Publish JAR
+      uses: actions/upload-artifact@v3.1.2
+      with:
+        name: HasiCraft-Discord-Bot-V3
+        path: ./target/hasicraft-discord-bot-SNAPSHOT-V3.0.jar
